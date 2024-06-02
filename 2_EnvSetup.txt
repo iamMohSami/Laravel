@@ -1,0 +1,295 @@
+                                        1. Install PHP Local Server -- XAMPP
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            2. INstall COMPOSER 
+
+Composer: Composer is a dependency manager for PHP and is used to install Laravel and its dependencies.
+
+Search Browser : composer install
+Install from "getcomposer.org" 
+
+For verification of Installation : 
+On COMMAND PROMPT : enter "composer" 
+
+WE GET THIS --> 
+C:\Users\Asus>composer
+   ______
+  / ____/___  ____ ___  ____  ____  ________  _____
+ / /   / __ \/ __ `__ \/ __ \/ __ \/ ___/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ (__  )  __/ /
+\____/\____/_/ /_/ /_/ .___/\____/____/\___/_/
+                    /_/
+Composer version 2.7.6 2024-05-04 23:03:15
+
+Usage:
+  command [options] [arguments]
+
+Options:
+  -h, --help                     Display help for the given command. When no command is given display help for the list command
+  -q, --quiet                    Do not output any message
+  -V, --version                  Display this application version
+      --ansi|--no-ansi           Force (or disable --no-ansi) ANSI output
+  -n, --no-interaction           Do not ask any interactive question
+      --profile                  Display timing and memory usage information
+      --no-plugins               Whether to disable plugins.
+      --no-scripts               Skips the execution of all scripts defined in composer.json file.
+  -d, --working-dir=WORKING-DIR  If specified, use the given directory as working directory.
+      --no-cache                 Prevent use of the cache
+  -v|vv|vvv, --verbose           Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+Available commands:
+  about                Shows a short information about Composer
+  archive              Creates an archive of this composer package
+  audit                Checks for security vulnerability advisories for installed packages
+  browse               [home] Opens the package's repository URL or homepage in your browser
+  bump                 Increases the lower limit of your composer.json requirements to the currently installed versions
+  check-platform-reqs  Check that platform requirements are satisfied
+  clear-cache          [clearcache|cc] Clears composer's internal package cache
+  completion           Dump the shell completion script
+  config               Sets config options
+  create-project       Creates new project from a package into given directory
+  depends              [why] Shows which packages cause the given package to be installed
+  diagnose             Diagnoses the system to identify common errors
+  dump-autoload        [dumpautoload] Dumps the autoloader
+  exec                 Executes a vendored binary/script
+  fund                 Discover how to help fund the maintenance of your dependencies
+  global               Allows running commands in the global composer dir ($COMPOSER_HOME)
+  help                 Display help for a command
+  init                 Creates a basic composer.json file in current directory
+  install              [i] Installs the project dependencies from the composer.lock file if present, or falls back on the composer.json
+  licenses             Shows information about licenses of dependencies
+  list                 List commands
+  outdated             Shows a list of installed packages that have updates available, including their latest version
+  prohibits            [why-not] Shows which packages prevent the given package from being installed
+  reinstall            Uninstalls and reinstalls the given package names
+  remove               [rm|uninstall] Removes a package from the require or require-dev
+  require              [r] Adds required packages to your composer.json and installs them
+  run-script           [run] Runs the scripts defined in composer.json
+  search               Searches for packages
+  self-update          [selfupdate] Updates composer.phar to the latest version
+  show                 [info] Shows information about packages
+  status               Shows a list of locally modified packages
+  suggests             Shows package suggestions
+  update               [u|upgrade] Updates your dependencies to the latest version according to composer.json, and updates the composer.lock file
+  validate             Validates a composer.json and composer.lock
+
+C:\Users\Asus>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        3. INSTALL LARAVEL GLOBALLY 
+
+On browser, go to "laravel.com" from here we will install Laravel global installer via command prompt
+On command prompt type : composer global require laravel/installer
+This command will install it
+
+For verification : 
+
+C:\Users\Asus>laravel
+Laravel Installer 5.8.1
+
+Usage:
+  command [options] [arguments]
+
+Options:
+  -h, --help            Display help for the given command. When no command is given display help for the list command
+  -q, --quiet           Do not output any message
+  -V, --version         Display this application version
+      --ansi|--no-ansi  Force (or disable --no-ansi) ANSI output
+  -n, --no-interaction  Do not ask any interactive question
+  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+Available commands:
+  completion  Dump the shell completion script
+  help        Display help for a command
+  list        List commands
+  new         Create a new Laravel application
+
+C:\Users\Asus>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                        4. CREATING A NEW PROJECT 
+
+Open Command Prompt on the location of htdocs and type : laravel new "ProjectName" 
+This will create a new project file in your XAMPP-htdocs 
+
+C:\xampp\htdocs>laravel new MyLaravelProject
+
+   _                               _
+  | |                             | |
+  | |     __ _ _ __ __ ___   _____| |
+  | |    / _` | '__/ _` \ \ / / _ \ |
+  | |___| (_| | | | (_| |\ V /  __/ |
+  |______\__,_|_|  \__,_| \_/ \___|_|
+
+
+ Would you like to install a starter kit? [No starter kit]:
+  [none     ] No starter kit
+  [breeze   ] Laravel Breeze
+  [jetstream] Laravel Jetstream
+ >
+
+
+ Which testing framework do you prefer? [Pest]:
+  [0] Pest
+  [1] PHPUnit
+ >
+
+
+ Would you like to initialize a Git repository? (yes/no) [no]:
+ >
+
+    Creating a "laravel/laravel" project at "./MyLaravelProject"
+    Installing laravel/laravel (v11.1.0)
+  - Installing laravel/laravel (v11.1.0): Extracting archive
+    Created project in C:\xampp\htdocs/MyLaravelProject
+Loading composer repositories with package information
+    Updating dependencies
+Lock file operations: 107 installs, 0 updates, 0 removals
+  - Locking brick/math (0.12.1)
+  - Locking carbonphp/carbon-doctrine-types (3.2.0)
+  - Locking dflydev/dot-access-data (v3.0.2)
+  - Locking doctrine/inflector (2.0.10)
+  - Locking doctrine/lexer (3.0.1)
+  - Locking dragonmantank/cron-expression (v3.3.3)
+  - Locking egulias/email-validator (4.0.2)
+  - Locking fakerphp/faker (v1.23.1)
+  - Locking filp/whoops (2.15.4)
+  - Locking fruitcake/php-cors (v1.3.0)
+  - Locking graham-campbell/result-type (v1.1.2)
+  - Locking guzzlehttp/guzzle (7.8.1)
+  - Locking guzzlehttp/promises (2.0.2)
+  - Locking guzzlehttp/psr7 (2.6.2)
+  - Locking guzzlehttp/uri-template (v1.0.3)
+  - Locking hamcrest/hamcrest-php (v2.0.1)
+  - Locking laravel/framework (v11.9.2)
+  - Locking laravel/pint (v1.16.0)
+  - Locking laravel/prompts (v0.1.23)
+  - Locking laravel/sail (v1.29.2)
+  - Locking laravel/serializable-closure (v1.3.3)
+  - Locking laravel/tinker (v2.9.0)
+  - Locking league/commonmark (2.4.2)
+  - Locking league/config (v1.2.0)
+  - Locking league/flysystem (3.28.0)
+  - Locking league/flysystem-local (3.28.0)
+  - Locking league/mime-type-detection (1.15.0)
+  - Locking mockery/mockery (1.6.12)
+  - Locking monolog/monolog (3.6.0)
+  - Locking myclabs/deep-copy (1.11.1)
+  - Locking nesbot/carbon (3.4.0)
+  - Locking nette/schema (v1.3.0)
+  - Locking nette/utils (v4.0.4)
+  - Locking nikic/php-parser (v5.0.2)
+  - Locking nunomaduro/collision (v8.1.1)
+  - Locking nunomaduro/termwind (v2.0.1)...............AND SO ON......... 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            5. STARTING OUR PROJECT SERVER 
+on command prompt, go to our new created project file and type "php artisan serve" 
+This will start our project/server on a new port and then open it 
+
+C:\xampp\htdocs\MyLaravelProject>php artisan serve
+
+   INFO  Server running on [http://127.0.0.1:8000].
+
+  Press Ctrl+C to stop the server
+
+  2024-06-01 22:57:27 ..................................................................................................................................................................................... ~ -2s
+  2024-06-01 22:57:30 /favicon.ico ........
