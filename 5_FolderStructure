@@ -1,0 +1,45 @@
+Now, we will get know the role of all the files/folders in our laravel project
+
+1. composer.json file
+   Very IMP file, contains the list pf all details and dependencies(libraries)
+   composer.lock file
+   contains hierarchy and additional dependencies
+
+2. Vendor folder
+   All the dependencies/libraries are actually stored in the vendor folder
+   similar to node_modules
+   never uploaded on github cause it is very heavy
+
+3. App
+   The actual/core code of our project is stored here
+   Contains subfolders :
+   http--> CONTROLLERS  
+   MODELS
+   providers --> middlewares
+
+4. Routes
+   Contains all the Routing Info
+   has 2 files ->
+   console.php = Used indirectly in command line
+   web.php = contains all routes which determines which view to show on the webpage
+
+5. Resources
+   Contains css,js and VIEWS (user interface files)
+
+6. Config
+   Contains all the configuration files of cache,app,auth,DATABASE CONNECTION,filesystem,mail and much more
+
+7. Database
+   Contains DB files, Factories, Migrations and Seeding
+
+8. Public
+   Contains the main indx.php file which is the first file to get render on the browser
+   favicon file
+   robots.txt = used in SEO
+
+9. Storage folder
+
+10. Test
+    Used for Unit Testing purposes
+
+11. env file = contains all the secret passkeys

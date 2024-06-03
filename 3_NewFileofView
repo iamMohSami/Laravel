@@ -1,0 +1,27 @@
+In Resources Folder we have VIEWS as sub-Folder
+which contains all our frontend rendering pages
+
+To create a new page :
+New File -> home.blade.php
+
+<h1>Home Page</h1>
+
+In order to display this :
+Need to add a Route
+
+In Routes folder --
+In web.php file --
+
+ADD NEW CODE
+
+Route::get('/home', function () {
+return view('home');
+});
+
+Thus, on the output on browser,
+
+ON http://127.0.0.1:8000/home
+we get : <h1>Home Page</h1>
+
+ON http://127.0.0.1:8000
+we get : <h1>Hello</h1>

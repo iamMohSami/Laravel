@@ -1,0 +1,117 @@
+What is MVC
+
+Model-View-Controller.
+
+MVC is a Software design pattern to develop reliable software applications.
+
+In MVC we divide applications in three parts
+
+Model
+View
+Controller
+
+Models: Write Business logic, database communication
+
+View: User interface (Code we write to display on UI)
+
+Controller: Handle user interaction and select a view to render, communicate Model and View
+
+## Lecture Notes: Understanding MVC Architecture
+
+### What is MVC?
+
+MVC stands for **Model-View-Controller**. It is a software design pattern used to develop reliable and scalable software applications. MVC helps organize and separate different concerns in an application, making it easier to manage and extend.
+
+### Breaking Down MVC: A Simple Analogy
+
+Imagine building a toy house:
+
+- **Model:** This is the blueprint of the house. It contains all the details about the rooms, doors, windows, and how everything is connected.
+- **View:** This is what the house looks like from the outside. It’s the actual toy house you see and play with.
+- **Controller:** This is like the builder who follows the blueprint (Model) and constructs the house (View). The builder also handles any changes you want to make to the house.
+
+### MVC in Software Applications
+
+1. **Model:**
+
+   - **Purpose:** Manages the data, logic, and rules of the application.
+   - **Functions:**
+     - Handles data storage and retrieval.
+     - Contains the business logic (the rules and procedures that define how data can be changed and manipulated).
+     - Communicates with the database.
+   - **Example:** In a blog application, the Model might handle creating, reading, updating, and deleting blog posts.
+
+2. **View:**
+
+   - **Purpose:** Displays the user interface and presents data to the user.
+   - **Functions:**
+     - Contains the HTML, CSS, and JavaScript to present data.
+     - Updates the interface when data changes.
+   - **Example:** In the same blog application, the View would be the webpage that shows the list of blog posts, the individual post content, etc.
+
+3. **Controller:**
+   - **Purpose:** Acts as an intermediary between the Model and the View.
+   - **Functions:**
+     - Handles user inputs and actions (like clicking a button or submitting a form).
+     - Fetches data from the Model and sends it to the View.
+     - Updates the Model based on user interactions.
+   - **Example:** In the blog application, the Controller would manage user actions like creating a new post, editing an existing one, or deleting a post.
+
+### How MVC Works Together
+
+1. **User Interaction:**
+
+   - A user interacts with the View (e.g., clicking a button to add a new blog post).
+
+2. **Controller Processes Request:**
+
+   - The Controller receives the user action and determines what needs to be done (e.g., opening a form to create a new post).
+
+3. **Model Interaction:**
+
+   - If necessary, the Controller interacts with the Model to retrieve or update data (e.g., saving the new blog post to the database).
+
+4. **Updating the View:**
+   - The Controller updates the View with the new data or changes (e.g., displaying the newly added blog post on the webpage).
+
+### Visualizing MVC Flow
+
+1. **User -> View:**
+
+   - The user sees the webpage and interacts with it.
+
+2. **View -> Controller:**
+
+   - The user’s actions (e.g., clicks, form submissions) are sent to the Controller.
+
+3. **Controller -> Model:**
+
+   - The Controller requests data from the Model or asks the Model to update its data.
+
+4. **Model -> Controller:**
+
+   - The Model sends the requested data back to the Controller or confirms the data update.
+
+5. **Controller -> View:**
+
+   - The Controller sends the data to the View to update what the user sees.
+
+6. **View -> User:**
+   - The user sees the updated data on the webpage.
+
+### Example Scenario: Submitting a Contact Form
+
+1. **User fills out the contact form on the webpage (View).**
+2. **User submits the form (View sends data to Controller).**
+3. **Controller processes the submission and sends data to Model for storage.**
+4. **Model saves the data to the database and confirms it (Model sends confirmation to Controller).**
+5. **Controller sends a success message back to the View.**
+6. **View displays a success message to the user.**
+
+### Summary
+
+- **Model:** Manages data and business logic.
+- **View:** Displays the user interface.
+- **Controller:** Handles user interactions and coordinates between Model and View.
+
+MVC architecture helps in creating organized, maintainable, and scalable applications by separating concerns into distinct components. This separation makes it easier to develop, test, and maintain the software.
