@@ -43,3 +43,121 @@ Now, we will get know the role of all the files/folders in our laravel project
     Used for Unit Testing purposes
 
 11. env file = contains all the secret passkeys
+
+## Lecture Notes: Understanding the Laravel Folder Structure
+
+In this lecture, we will explore the role of each file and folder in a Laravel project. Laravel is a popular PHP framework that follows the MVC architecture, making it easy to build web applications.
+
+### 1. `composer.json` File
+
+- **Importance:**
+  - This file is crucial as it contains the list of all the dependencies (libraries) required by the project.
+  - It also includes metadata about the project, such as the project name, version, and authors.
+- **`composer.lock` File:**
+  - This file records the exact versions of the dependencies installed.
+  - It ensures that the project runs consistently across different environments by maintaining a consistent dependency tree.
+
+### 2. `vendor` Folder
+
+- **Purpose:**
+  - This folder stores all the dependencies and libraries that the project needs.
+  - Similar to the `node_modules` folder in Node.js projects.
+- **Note:**
+  - The `vendor` folder is typically not uploaded to version control systems like GitHub because it can be regenerated using the `composer install` command and is usually quite large.
+
+### 3. `app` Folder
+
+- **Purpose:**
+  - This is where the core code of the project resides.
+- **Subfolders:**
+  - **`Http` Folder:**
+    - Contains controllers, which handle user requests and interact with models and views.
+    - Also contains middleware, which filters HTTP requests entering the application.
+  - **`Models` Folder:**
+    - Contains the application's Eloquent models, which represent the data structure and interact with the database.
+  - **`Providers` Folder:**
+    - Contains service providers that boot and configure the application services.
+
+### 4. `routes` Folder
+
+- **Purpose:**
+  - Contains all the routing information for the application.
+- **Files:**
+  - **`web.php`:**
+    - Contains routes that define which views are shown on different URLs.
+  - **`console.php`:**
+    - Contains routes for Artisan commands, used indirectly via the command line.
+
+### 5. `resources` Folder
+
+- **Purpose:**
+  - Stores front-end assets and views.
+- **Subfolders:**
+  - **`views` Folder:**
+    - Contains Blade templates, which are the HTML files that the user sees.
+  - **`css` and `js` Folders:**
+    - Contains the CSS and JavaScript files for styling and adding interactivity to the application.
+
+### 6. `config` Folder
+
+- **Purpose:**
+  - Contains all the configuration files for the application.
+- **Examples of Configuration Files:**
+  - `app.php`: General application configuration.
+  - `auth.php`: Authentication settings.
+  - `database.php`: Database connection settings.
+  - `cache.php`, `filesystem.php`, `mail.php`, etc.: Other configuration settings.
+
+### 7. `database` Folder
+
+- **Purpose:**
+  - Contains database-related files.
+- **Subfolders:**
+  - **`migrations`:**
+    - Contains migration files for creating and modifying database tables.
+  - **`factories`:**
+    - Contains factory files for generating sample data.
+  - **`seeds`:**
+    - Contains seed files for populating the database with initial data.
+
+### 8. `public` Folder
+
+- **Purpose:**
+  - Contains publicly accessible files.
+- **Important Files:**
+  - **`index.php`:**
+    - The entry point for the application; this file is loaded first when the browser accesses the site.
+  - **`favicon.ico`:**
+    - The icon displayed in the browser tab.
+  - **`robots.txt`:**
+    - Used for SEO purposes to manage how search engines index the site.
+
+### 9. `storage` Folder
+
+- **Purpose:**
+  - Contains logs, compiled Blade templates, file-based sessions, and other generated files.
+- **Subfolders:**
+  - `app`: Application-specific files.
+  - `framework`: Framework-specific files (caches, views, sessions).
+  - `logs`: Application logs.
+
+### 10. `tests` Folder
+
+- **Purpose:**
+  - Contains tests for the application.
+- **Types of Tests:**
+  - **Unit Tests:**
+    - Tests individual units of code (like functions or methods).
+  - **Feature Tests:**
+    - Tests the application's features (like user registration or login).
+
+### 11. `.env` File
+
+- **Purpose:**
+  - Stores environment-specific settings, such as database credentials, API keys, and other sensitive information.
+- **Note:**
+  - This file should never be shared publicly or committed to version control.
+
+### Summary
+
+The Laravel folder structure is designed to keep the code organized and maintainable. Each folder and file has a specific role, contributing to the overall functionality and scalability of the application. Understanding this structure is crucial for effective Laravel development.

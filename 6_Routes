@@ -1,0 +1,97 @@
+                                            <--WHAT IS ROUTING-->
+
+Routes : The URL/Link to open any page which a user can see is known as the ROUTE
+
+Advance Routing features proivided by Laravel =>
+
+1.  remove the extension if required i.e. can use app/home instead of app/home.php
+2.  can open the file with a different named route apart from the filename
+
+                                            <--HOW TO MAKE A ROUTE -->
+
+To create a new page :
+New File -> home.blade.php
+
+<h1>Home Page</h1>
+
+In order to display this :
+Need to add a Route
+
+In Routes folder --
+In web.php file --
+
+ADD NEW CODE
+
+Route::get('/home', function () {
+return view('home');
+});
+
+Thus, on the output on browser,
+
+ON http://127.0.0.1:8000/home
+we get : <h1>Home Page</h1>
+
+ON http://127.0.0.1:8000
+we get : <h1>Hello</h1>
+
+                                            <--OPEN ANY VIEW WITH ROUTING -->
+
+In order to open a view, we have 2 methods
+
+METHOD 1 =
+Route::get('/home', function () {
+return view('home');
+});
+
+METHOD 2=
+Route::view('/home' , 'home');
+{This shortcut method can only be used to open a view
+But, if we want to open any Controllers, we need to only use method 1}
+
+                                    <--PASSING DATA IN ROUTING // RENDERING DYNAMIC CONTENT--->
+
+Make a new view : about.blade.php
+
+<h1>Hello</h1>
+<h1>This is About Page</h1>
+<h1>Good to see you {{$name}} sir</h1>
+
+Make its Route ==>>
+
+Route::get('/about/{name}', function ($name) {
+echo "Username -> $name";
+return view('about', ['name' => $name]);
+});
+
+On Browser ==>>
+
+http://127.0.0.1:8000/about/
+ERROR (bcoz no additional name info give in the route path)
+
+http://127.0.0.1:8000/about/messi
+Username -> messi
+Hello
+This is About Page
+Good to see you messi sir
+
+                                    <--WORKING OF ANCHOR TAGS--->
+
+we use anchor tags to jump from one page to other
+this can also be done with the help of Routes
+
+In our Starting welcome.blade.php page =>
+
+<h1>Hello </h1>
+
+<h3>Click below to go on other Pages</h3>
+<a href="/home">Home</a>
+<a href="/about/sami">About Sami</a>
+
+                                    <--OTHER ROUTING METHODS used in api and forms--->
+
+Route::get($uri, $callback);
+Route::post($uri, $callback);
+Route::put($uri, $callback);
+Route::patch($uri, $callback);
+Route::delete($uri, $callback);
+Route::options($uri, $callback);
