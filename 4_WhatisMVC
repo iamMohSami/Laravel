@@ -16,6 +16,8 @@ View: User interface (Code we write to display on UI)
 
 Controller: Handle user interaction and select a view to render, communicate Model and View
 
+CHAT GPT EXTERNAL NOTES
+
 ## Lecture Notes: Understanding MVC Architecture
 
 ### What is MVC?

@@ -44,6 +44,8 @@ Now, we will get know the role of all the files/folders in our laravel project
 
 11. env file = contains all the secret passkeys
 
+CHATGPT EXTERNAL NOTES
+
 ## Lecture Notes: Understanding the Laravel Folder Structure
 
 In this lecture, we will explore the role of each file and folder in a Laravel project. Laravel is a popular PHP framework that follows the MVC architecture, making it easy to build web applications.

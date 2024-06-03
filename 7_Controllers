@@ -1,0 +1,400 @@
+Controller in Laravel
+
+                                        WHAT IS CONTROLLER
+
+The Controller comes under MVC architecture.
+The Controller handles requests from user
+Display view.
+Handle database
+We can say that:- the controller is a central unit that handles user request, model and views
+
+According to MVC architecture diagram :
+When a User Requests for display/rendering of a webpage - The Controller takes the user Req and returns the relevant VIEW page
+If a User performs any DB Operation or any Logic - The Cotroller calls the required MODEL, performs the task and then displays it through the VIEW
+
+                            WHERE ARE THE CONTROLLERS LOCATED IN THE FILE STRUCTURE
+
+In app/http/controllers
+
+                                        HOW TO MAKE A CONTROLLER
+
+with use of command line : php artisan make:controller NameOfController
+NOTE = always start the controller name with a capital letter as it is made as form of a CLASS and it is a coding standard to keep a classname as Capital!!
+
+ex :  
+C:\xampp\htdocs\MyProject>php artisan make:controller UserController
+
+INFO Controller [C:\xampp\htdocs\MyProject\app\Http\Controllers\UserController.php] created successfully.
+
+The newly made UserController.php file ==>
+
+<?php
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+    //
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                CALLING CONTROLLERS WITH ROUTES  {V IMP} 
+If you want a Controller to perform any task or display anything, you can do it by creating functions in it. 
+Ex : 
+class UserController extends Controller
+{
+    function UserName(){
+        return "Mohammad Sami" ; 
+    }
+}
+
+IMPORTATLY, you also need to create aa new ROUTE for it, BUT FIRST YOU NEED TO IMPORT IT in the routes file 
+Ex : 
+use App\Http\Controllers\UserController;
+
+Route::get('username', [UserController::class,'UserName']) ; 
+
+OUTPUT ON BROWSER :  http://127.0.0.1:8000/username
+Mohammad Sami
+
+SYNTAX EXPLANATION => 
+
+
+
+
+MORE EXAMPLES => 
+In UserController.php -- 
+
+class UserController extends Controller
+{
+    function UserName(){
+        return "Mohammad Sami" ; 
+    }
+
+    function UserAge(){
+        return 20 ; 
+    }
+
+//DYNAMIC DATA EXAMPLE
+    function DynamicName($name){
+        return "Your name is : " . $name ; 
+    }
+}
+
+
+In Routes\web.php --
+Route::get('username', [UserController::class,'UserName']) ; 
+Route::get('userage', [UserController::class,'UserAge']) ; 
+Route::get('dynamicname/{name}', [UserController::class,'DynamicName']) ; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    CALL VIEW FROM CONTROLLER
+In resources/views
+we have a view file = home.blade.php
+
+In routes/app.php 
+Route::get('/home', function () {
+    return view('home');
+});
+
+NOTE : REFER 6_Routes for more info
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                CALL VIEW WHICH IS IN NESTED FOLDER
+IN resources/views
+Create a new folder named "Admin" and in this folder make a new file "adminlogin.blade.php" which contains 
+<h1>ADMIN LOGIN</h1>
+
+In UserController.php -- 
+
+class UserController extends Controller
+{
+    function UserName(){
+        return "Mohammad Sami" ; 
+    }
+
+    function UserAge(){
+        return 20 ; 
+    }
+
+    function DynamicName($name){
+        return "Your name is : " . $name ; 
+    }
+
+    function AdminLogin(){
+        return view('admin.adminlogin');
+    }
+}
+
+In Routes\web.php --
+Route::get('username', [UserController::class,'UserName']) ; 
+Route::get('userage', [UserController::class,'UserAge']) ; 
+Route::get('dynamicname/{name}', [UserController::class,'DynamicName']) ; 
+Route::get('adminlogin',[UserController::class,'AdminLogin']);
+
+
+
+
+
+CHAT GPT EXTERNAL  NOTES :: 
+
+
+Sure, let's expand on your notes and add more details to enhance your knowledge about Laravel controllers. We'll cover additional aspects such as dependency injection, middleware, and resource controllers. Additionally, we'll explain the syntax of the provided example in detail.
+
+## Lecture 8: Controllers in Laravel
+
+### What is a Controller?
+
+- **Definition:**
+  - Controllers in Laravel handle HTTP requests and responses. They act as intermediaries between the model and the view, processing user input, calling models, and rendering views.
+
+- **Role in MVC:**
+  - **Model:** Manages data and business logic.
+  - **View:** Manages the user interface and presentation.
+  - **Controller:** Manages the application's logic, directing traffic between the model and view.
+
+### Where are Controllers Located?
+
+- Controllers are located in the `app/Http/Controllers` directory.
+
+### How to Make a Controller
+
+- **Using Artisan Command:**
+  - Command to create a controller:
+    ```bash
+    php artisan make:controller NameOfController
+    ```
+  - Example:
+    ```bash
+    C:\xampp\htdocs\MyProject>php artisan make:controller UserController
+    ```
+  - Output:
+    ```
+    INFO Controller [C:\xampp\htdocs\MyProject\app\Http\Controllers\UserController.php] created successfully.
+    ```
+
+- **Example Controller:**
+    ```php
+    <?php
+
+    namespace App\Http\Controllers;
+
+    use Illuminate\Http\Request;
+
+    class UserController extends Controller
+    {
+        // Your controller methods go here
+    }
+    ```
+
+### Calling Controllers with Routes
+
+- **Creating Functions in Controller:**
+  - Example method in `UserController`:
+    ```php
+    class UserController extends Controller
+    {
+        public function UserName()
+        {
+            return "Mohammad Sami";
+        }
+    }
+    ```
+
+- **Setting Up Routes to Call Controller Methods:**
+  - Import the controller in the `routes/web.php` file.
+    ```php
+    use App\Http\Controllers\UserController;
+    ```
+  - Define a route to map a URL to a controller method.
+    ```php
+    Route::get('username', [UserController::class, 'UserName']);
+    ```
+
+- **Syntax Explanation:**
+  - `use App\Http\Controllers\UserController;`: This statement imports the `UserController` class so it can be used within the `routes/web.php` file.
+  - `Route::get('username', [UserController::class, 'UserName']);`: This maps the URL `http://127.0.0.1:8000/username` to the `UserName` method in the `UserController`.
+    - `Route::get`: This method defines a new GET route.
+    - `'username'`: The URL endpoint for the route.
+    - `[UserController::class, 'UserName']`: An array that specifies the controller class and the method to be called.
+
+- **Output in Browser:**
+  - Visiting `http://127.0.0.1:8000/username` will display:
+    ```
+    Mohammad Sami
+    ```
+
+### Dependency Injection in Controllers
+
+- **Injecting Dependencies:**
+  - Laravel allows you to inject dependencies into your controller methods via type-hinted parameters.
+  - Example with `Request` injection:
+    ```php
+    use Illuminate\Http\Request;
+
+    class UserController extends Controller
+    {
+        public function getUserData(Request $request)
+        {
+            $name = $request->input('name');
+            return "User name is: " . $name;
+        }
+    }
+    ```
+
+  - Corresponding route:
+    ```php
+    Route::get('getuserdata', [UserController::class, 'getUserData']);
+    ```
+
+### Using Middleware in Controllers
+
+- **Middleware Overview:**
+  - Middleware provides a convenient mechanism for filtering HTTP requests entering your application.
+  - You can assign middleware to a controller's routes or within the controller's constructor.
+
+- **Example Middleware Usage:**
+    ```php
+    class UserController extends Controller
+    {
+        public function __construct()
+        {
+            $this->middleware('auth');
+        }
+
+        public function UserName()
+        {
+            return "Mohammad Sami";
+        }
+    }
+    ```
+
+### Resource Controllers
+
+- **Generating a Resource Controller:**
+  - A resource controller provides a convenient way to handle all CRUD operations.
+  - Command to create a resource controller:
+    ```bash
+    php artisan make:controller UserController --resource
+    ```
+
+- **Resource Route:**
+    ```php
+    Route::resource('users', UserController::class);
+    ```
+
+- **Resource Controller Methods:**
+  - `index()`: Display a listing of the resource.
+  - `create()`: Show the form for creating a new resource.
+  - `store()`: Store a newly created resource in storage.
+  - `show()`: Display the specified resource.
+  - `edit()`: Show the form for editing the specified resource.
+  - `update()`: Update the specified resource in storage.
+  - `destroy()`: Remove the specified resource from storage.
+
+### Returning Views from Controllers
+
+- **Basic Example:**
+  - Create a view file `home.blade.php` in `resources/views`.
+    ```html
+    <!-- resources/views/home.blade.php -->
+    <h1>Home Page</h1>
+    ```
+
+- **Controller Method to Return a View:**
+  ```php
+  class UserController extends Controller
+  {
+      public function ShowHome()
+      {
+          return view('home');
+      }
+  }
+  ```
+
+- **Route to Access the View:**
+  ```php
+  Route::get('/home', [UserController::class, 'ShowHome']);
+  ```
+
+### Calling a View from a Nested Folder
+
+- **Create a Nested View:**
+  - Create a folder named `Admin` in `resources/views` and a file `adminlogin.blade.php` within it.
+    ```html
+    <!-- resources/views/Admin/adminlogin.blade.php -->
+    <h1>ADMIN LOGIN</h1>
+    ```
+
+- **Controller Method to Return the Nested View:**
+  ```php
+  class UserController extends Controller
+  {
+      public function AdminLogin()
+      {
+          return view('Admin.adminlogin');
+      }
+  }
+  ```
+
+- **Route to Access the Nested View:**
+  ```php
+  Route::get('adminlogin', [UserController::class, 'AdminLogin']);
+  ```
+
+### Summary
+
+- **Controllers:** Handle requests, process data, and return views or other responses.
+- **Creating Controllers:** Use `php artisan make:controller` command.
+- **Defining Routes:** Map URLs to controller methods using the `Route` facade.
+- **Dependency Injection:** Inject services into controllers for cleaner code.
+- **Middleware:** Apply middleware to controller methods for request filtering.
+- **Resource Controllers:** Simplify CRUD operations with resource controllers.
+
+By mastering controllers in Laravel, you can efficiently manage the flow of your application, ensuring a clean separation of concerns and maintainable code structure.
