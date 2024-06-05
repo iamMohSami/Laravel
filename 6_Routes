@@ -54,13 +54,13 @@ Make a new view : about.blade.php
 
 <h1>Hello</h1>
 <h1>This is About Page</h1>
-<h1>Good to see you {{$name}} sir</h1>
+<h1>Good to see you {{$Name}} sir</h1>
 
 Make its Route ==>>
 
 Route::get('/about/{name}', function ($name) {
 echo "Username -> $name";
-return view('about', ['name' => $name]);
+return view('about', ['Name' => $name]);
 });
 
 On Browser ==>>

@@ -1,0 +1,103 @@
+                                             WHAT ARE VIEWS?
+
+Contains the UI part of the project and has the webpages which the user will actually see and the browser will render
+
+                                             HOW TO MAKE A VIEW?
+
+METHOD 1 : Directly, by left click on View folder and create a new file named "about.blade.php"
+METHOD 2 : Command Line
+
+php artisan make:view about
+
+NOTE : No need to write "about.blade.php" in command line, only write "about", it will still create the file "about.blade.php"
+
+                                            CALLING VIEW FROM ROUTE!
+
+we have resources/views/about.blade.php :
+
+<h1>ABOUT PAGE</h1>
+
+in routes/web.php :
+
+Route::get('/home', function () {
+return view('home');
+});
+
+                                    CALLING VIEW FROM CONTROLLER
+
+we have resources/views/about.blade.php :
+
+<h1>ABOUT PAGE</h1>
+
+In UserController.php file :
+class UserController extends Controller
+{
+function AboutPage(){
+return view('about');
+}
+}
+
+In routes/web.php :
+use App\Http\Controllers\UserController;
+Route::get('/about' , [UserController::class , 'AboutPage']);
+
+VERY IMPORTANT => WHY DO WE NEED TO CALL VIEWS FROM CONTROLLER AND NOT ALWAYS DIRECTLY THROUGH THE ROUTES which is much simpler?????
+
+Bcoz, Calling Views from Routes will only help when the views are "STATIC"
+If our view pages, needs to do some DB operation and execute some logic i.e. "DYNAMIC VIEWS", we will always need to use the Controller Method..!!
+
+                                    MAKING AND CALLING NESTED VIEWS
+
+IN resources/views
+Create a new folder named "Admin" and in this folder make a new file "adminlogin.blade.php" which contains
+
+<h1>ADMIN LOGIN</h1>
+
+COMMAND LINE METHOD = php artisan make:view admin.login
+
+In UserController.php --
+
+class UserController extends Controller
+{
+function AdminLogin(){
+return view('admin.adminlogin');
+}
+}
+
+In Routes\web.php --
+use App\Http\Controllers\UserController;
+Route::get('adminlogin',[UserController::class,'AdminLogin']);
+
+                                    PASSING DYNAMIC DATA INTO VIEWS
+
+In adminName.blade.view --
+
+<h1>Admin Name - {{$xyz}}</h1>
+
+In UserController.php --
+
+class UserController extends Controller
+{
+function AdminName(){
+return view('admin.adminName' , ['xyz'=>$name]);
+}
+}
+
+In Routes\web.php --
+use App\Http\Controllers\UserController;
+Route::get('adminName/{name}',[UserController::class,'AdminName']);
+
+                IF YOU ARE NOT SURE WHETHER A VIEW EXISTS OR NOT, TO CHECK EXISTENCE
+
+In UserController.php file --
+
+need to import a new dependency --
+use Illuminate\Support\Facades\View ;
+
+function AdminLogin(){
+if(view::exists('admin.adminlogin')) {
+return view('admin.adminlogin');
+}else{
+echo "No View Found";
+}
+}
