@@ -1,0 +1,265 @@
+                                    WHAT IS SUBVIEW??
+SubView is not a new concept or new type of view
+When one VIEW is Included in any other View, THEN IT IS CALLED AS "SUBVIEW" 
+
+The View which is Included = SUBVIEW
+The parent View in which the SubView is Included= MAINVIEW
+
+                            MAKING NEW SUB-VIEW AND USING THEM!
+Need to use the =>  @include('viewname')
+Ex => 
+Create a new Folder in Views named as "Common" and include two views init : Header and Footer
+In header.blade.php =>
+<div style="color: red">
+    <h1>This is HEADER</h1>
+</div>
+
+In footer.blade.php => 
+<div style="color: green">
+    <h1>This is FOOTER</h1>
+</div>
+
+
+Now, ON WELCOME.BLADE.PHP View => 
+<h1>Hello </h1>
+
+@include('common.header');       //USE OF INCLUDE TO MAKE A SUBVIEW
+
+<h3>Click below to go on other Pages</h3>
+<a href="/home">Home</a>
+<a href="/about/sami">About Sami</a>
+
+@include('common.footer');
+
+
+
+                                    PASSING DATA FROM A SUBVIEW
+Create a new view  in the common folder : common.ViewWithData 
+
+<div style="color: blue"      >
+    <h2>SubView Example with Passed Data : {{$statement}}</h2>
+</div>
+
+
+In Home.blade.view => 
+{{-- EXAMPLE OF A SUBVIEW WITH DATA PASSED IN IT  --}}
+@include('common.ViewWithData' , ['statement'=>'This Statement is Custom Data passed in tis Subview'])
+
+
+
+
+
+                                      TO CHECK WHETHER A VIEW EXISTS OR NOT 
+USE => @includeIf
+Ex=> 
+@includeIf('common.thisViewIsNotThere') 
+{{-- THE ABOVE CODE STATEMENT WILL NOT GIVE ANY ERROR  --}}
+
+{{-- @include('common.thisViewIsNotThere')  THIS WILL RESULT IN ERROR--}}
+<h1>Includeif can be used to check if a subview exists or not</h1>
+<h3>It checks for the particular view, if not found it helps in not getting any Error</h3>
+
+
+
+
+
+
+
+
+
+
+ADDITIONAL CHATGPT NOTES => 
+
+### Lecture 10: SubView in Laravel Blade Templates
+
+#### **What is SubView?**
+
+In Laravel, a SubView refers to a view that is included within another view. This helps in creating reusable components like headers, footers, and other common sections of a webpage. The view that includes another view is called the MainView, and the included view is called the SubView.
+
+#### **Why Use SubViews?**
+
+1. **Reusability:** SubViews allow you to reuse the same code in multiple places, reducing redundancy.
+2. **Maintainability:** By breaking down the view into smaller components, it becomes easier to manage and update.
+3. **Modularity:** SubViews promote a modular approach to designing your application, making it easier to isolate and fix issues.
+
+#### **Creating and Using SubViews**
+
+To include a SubView in a MainView, use the `@include` directive provided by Blade.
+
+**Example: Creating Header and Footer SubViews**
+
+1. **Create a Folder for Common Views**
+
+   In `resources/views`, create a new folder named `common`.
+
+2. **Create `header.blade.php`**
+
+   ```html
+   <!-- resources/views/common/header.blade.php -->
+   <div style="color: red">
+       <h1>This is HEADER</h1>
+   </div>
+   ```
+
+3. **Create `footer.blade.php`**
+
+   ```html
+   <!-- resources/views/common/footer.blade.php -->
+   <div style="color: green">
+       <h1>This is FOOTER</h1>
+   </div>
+   ```
+
+4. **Include Header and Footer in the Main View**
+
+   In `resources/views/welcome.blade.php`:
+
+   ```html
+   <!-- resources/views/welcome.blade.php -->
+   <h1>Hello</h1>
+
+   @include('common.header') <!-- Use of include to make a SubView -->
+
+   <h3>Click below to go on other Pages</h3>
+   <a href="/home">Home</a>
+   <a href="/about/sami">About Sami</a>
+
+   @include('common.footer')
+   ```
+
+#### **Passing Data to SubViews**
+
+You can pass data to SubViews just like you do with regular views.
+
+1. **Create a SubView that Accepts Data**
+
+   ```html
+   <!-- resources/views/common/view_with_data.blade.php -->
+   <div style="color: blue">
+       <h2>SubView Example with Passed Data: {{$statement}}</h2>
+   </div>
+   ```
+
+2. **Include SubView in a Main View with Data**
+
+   In `resources/views/home.blade.php`:
+
+   ```html
+   <!-- resources/views/home.blade.php -->
+   {{-- Example of a SubView with data passed to it --}}
+   @include('common.view_with_data', ['statement' => 'This statement is custom data passed to this SubView'])
+   ```
+
+#### **Checking If a SubView Exists**
+
+Sometimes you might want to include a SubView only if it exists to avoid errors. Use the `@includeIf` directive for this.
+
+1. **Using `@includeIf`**
+
+   ```html
+   <!-- resources/views/welcome.blade.php -->
+   @includeIf('common.thisViewIsNotThere') 
+   {{-- The above code statement will not give any error if the view does not exist --}}
+
+   <h1>`includeIf` can be used to check if a SubView exists or not</h1>
+   <h3>It checks for the particular view, and if not found, it helps in avoiding errors</h3>
+   ```
+
+   Without `includeIf`:
+
+   ```html
+   {{-- @include('common.thisViewIsNotThere') --}} <!-- This will result in an error if the view does not exist -->
+   ```
+
+#### **Advanced Features and Best Practices**
+
+1. **Using `@includeWhen` and `@includeUnless`**
+
+   - **`@includeWhen`**: Includes a SubView only if a certain condition is true.
+
+     ```html
+     @includeWhen($isLoggedIn, 'common.user_profile', ['user' => $user])
+     ```
+
+   - **`@includeUnless`**: Includes a SubView unless a certain condition is true.
+
+     ```html
+     @includeUnless($isAdmin, 'common.guest_message')
+     ```
+
+2. **Nested SubViews**
+
+   SubViews can also include other SubViews. This helps in further breaking down components.
+
+   ```html
+   <!-- resources/views/common/header.blade.php -->
+   <div style="color: red">
+       <h1>This is HEADER</h1>
+       @include('common.navbar')
+   </div>
+   ```
+
+3. **Using `@each` for Lists**
+
+   Blade provides the `@each` directive to include a SubView for each item in a collection.
+
+   ```html
+   <!-- resources/views/common/player.blade.php -->
+   <div>
+       <h2>{{ $player }}</h2>
+   </div>
+
+   <!-- resources/views/team.blade.php -->
+   @each('common.player', $players, 'player')
+   ```
+
+4. **Default Content with `@includeFirst`**
+
+   The `@includeFirst` directive attempts to include the first SubView that exists from an array of views. This is useful for fallbacks.
+
+   ```html
+   @includeFirst(['custom.header', 'common.header'])
+   ```
+
+5. **Defining Sections and Layouts**
+
+   Blade also allows defining sections and layouts for more structured views.
+
+   ```html
+   <!-- resources/views/layouts/main.blade.php -->
+   <!DOCTYPE html>
+   <html>
+   <head>
+       <title>App Name - @yield('title')</title>
+   </head>
+   <body>
+       @include('common.header')
+
+       <div class="container">
+           @yield('content')
+       </div>
+
+       @include('common.footer')
+   </body>
+   </html>
+
+   <!-- resources/views/child.blade.php -->
+   @extends('layouts.main')
+
+   @section('title', 'Page Title')
+
+   @section('content')
+       <p>This is my body content.</p>
+   @endsection
+   ```
+
+### **Summary**
+
+- **SubViews**: A way to include one view inside another, promoting reusability and maintainability.
+- **Creating SubViews**: Use the `@include` directive to include views within other views.
+- **Passing Data**: Data can be passed to SubViews just like regular views using the `@include` directive.
+- **Conditional Inclusion**: Use `@includeIf` to include a view only if it exists, avoiding errors.
+- **Advanced Features**: Utilize `@includeWhen`, `@includeUnless`, `@each`, and `@includeFirst` for more advanced and flexible inclusion of SubViews.
+- **Sections and Layouts**: Blade provides powerful features for defining sections and layouts to create more structured and maintainable templates.
+
+By mastering SubViews and Blade's advanced features, you can create highly reusable, maintainable, and efficient templates, enhancing the overall development experience in Laravel.
