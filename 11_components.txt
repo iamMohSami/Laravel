@@ -1,0 +1,184 @@
+                            WHAT ARE COMPONENTS??
+
+A piece of code that can reuse in our project.
+Like a function is written once can reuse again and again.
+We can make a component and reuse it again and again.
+Component can be reused in the same file as well as different files also.
+
+Difference Btw Functions and Components =>
+A function is created in a PROGRAMMING LANGUAGE and only contains CODE OF THAT SPECIFIC LANGUAGE
+A component is created in FRAMEWORKS and contains CODE OF THAT SPECIFIC LANGUAGE,CSS,JS AND OTHER UI components
+
+
+Example of COMPONENTS :  Messages like SUCCESS, ERROR, OOPS, ALERT on Login/SignUp/Any Finctionality like Buying a product,Return,Submit Form.....These Messages can be reused many times for different purposes. So to display the messages we can build them as a COMPONENT and reuse it
+
+                            MAKING A NEW COMPONENT!!
+Here, we will make 3 components : SUCCESS, ALERT and WARNING
+
+first of all => php artisan make::component Messages
+PS C:\xampp\htdocs\MyProject> php artisan make:component Messages 
+
+   INFO  Component [C:\xampp\htdocs\MyProject\app\View\Components\Messages.php] created successfully.
+
+This will create 2 NEW FILES =>
+A new folder named VIEW\COMPONENTS in the APP DIRECTORY and create a file Messages.php1
+A new folder named COMPONENTS in the resources->views directory and create file messages.blade.php
+These 2 files contain some default code init 
+
+
+NOW, in messages.blade.php file =>
+<div>
+    <span class="success">SUCCESS Message</span>
+</div>
+
+<style>
+    .success{
+        margin: 3px;
+        padding: 5px;
+        height: 30px;
+        background-color: green;
+        color: white;
+        border: 2px solid black;
+    }
+</style>
+
+THROUGH THIS CODE WE HAVE CREATED A COMPONENT, BUT WE ALSO NEED TO KNOW HOW TO INSERT/USE it in various VIEW pages
+To Use a Component=>   <x-NAME_OF_COMPONENT/>
+
+Thus, Here, In HOME.BLADE.PHP => 
+We write => <x-messages/>
+
+
+                            PASSING DYNAMIC DATA IN THE SUCCESS COMPONET 
+create a new component => php artisan make:component dynamicCompWithData
+
+In dynamicCompWithData.blade.php => 
+<div>
+    <span class="success">{{$msg}}</span>
+</div>
+
+<style>
+    .success{
+        margin-bottom: 10px;
+        padding: 5px;
+        height: 30px;
+        background-color: green;
+        color: white;
+        border: 2px solid black;
+    }
+</style>
+
+AND in dynamicCompWithData.php IN THE APP FOLDER =>
+<?php
+
+namespace App\View\Components;
+
+use Closure;
+use Illuminate\Contracts\View\View;
+use Illuminate\View\Component;
+
+class dynamicCompwithData extends Component
+{
+    /**
+     * Create a new component instance.
+     */
+    public $msg ; 
+    public function __construct($msg)
+    {
+        $this->msg=$msg;
+    }
+
+    /**
+     * Get the view / contents that represent the component.
+     */
+    public function render(): View|Closure|string
+    {
+        return view('components.dynamic-compwith-data');
+    }
+}
+
+AND IN home.blade.php => 
+<h3>Components with Dynamic Messages - Passing DATA to the components</h3>
+<x-dynamicCompwithData msg="SignUp Sucess - Component with Data Passed"/>
+<br>
+<x-dynamicCompwithData msg="LoginIn Sucess - Component with Data Passed"/>
+
+
+
+
+                    PASSING DYNAMIC DATA and DYNAMIC CLASS NAME and CREATE ALL 3 COMPONENT Message 
+create a new component => php artisan make:component dynamicClassAllmsgs
+
+In dynamicClassAllmsgs.blade.php => 
+<div>
+    <span class="{{$class}}">{{$msg}}</span>
+</div>
+
+<style>
+    .success{
+        margin-bottom: 10px;
+        padding: 5px;
+        height: 30px;
+        background-color: green;
+        color: white;
+        border: 2px solid black;
+    }
+    .error{
+        margin-bottom: 10px;
+        padding: 5px;
+        height: 30px;
+        background-color: red;
+        color: white;
+        border: 2px solid black;
+    }
+    .alert{
+        margin-bottom: 10px;
+        padding: 5px;
+        height: 30px;
+        background-color: orange;
+        color: black;
+        border: 2px solid black;
+    }
+</style>
+
+AND in dynamicClassAllmsgs.php IN THE APP FOLDER =>
+<?php
+
+namespace App\View\Components;
+
+use Closure;
+use Illuminate\Contracts\View\View;
+use Illuminate\View\Component;
+
+class dynamicClassAllmsgs extends Component
+{
+    /**
+     * Create a new component instance.
+     */
+    public $msg;
+    public $class;
+
+    public function __construct($msg,$class)
+    {
+        //
+        $this->msg=$msg;
+        $this->class=$class;
+    }
+
+    /**
+     * Get the view / contents that represent the component.
+     */
+    public function render(): View|Closure|string
+    {
+        return view('components.dynamic-class-allmsgs');
+    }
+}
+
+
+AND IN home.blade.php => 
+<h3>Components with Dynamic Messages and Dynamic Class - ALL MESSAGES - Passing DATA to the components</h3>
+<x-dynamicClassAllmsgs msg="Hurray.. You WON!!" class="success"/> <br>
+<x-dynamicClassAllmsgs msg="ERROR - Invalid User" class="error"/> <br>  
+<x-dynamicClassAllmsgs msg="ALERT - This might be dangerous" class="alert"/>
+<br>
+
