@@ -1,11 +1,21 @@
                                     WHAT IS SUBVIEW??
+
+
 SubView is not a new concept or new type of view
 When one VIEW is Included in any other View, THEN IT IS CALLED AS "SUBVIEW" 
 
 The View which is Included = SUBVIEW
 The parent View in which the SubView is Included= MAINVIEW
 
+
+
+
+
+
+
                             MAKING NEW SUB-VIEW AND USING THEM!
+
+
 Need to use the =>  @include('viewname')
 Ex => 
 Create a new Folder in Views named as "Common" and include two views init : Header and Footer
@@ -33,7 +43,11 @@ Now, ON WELCOME.BLADE.PHP View =>
 
 
 
+
+
                                     PASSING DATA FROM A SUBVIEW
+
+
 Create a new view  in the common folder : common.ViewWithData 
 
 <div style="color: blue"      >
@@ -49,7 +63,12 @@ In Home.blade.view =>
 
 
 
+
+
+
                                       TO CHECK WHETHER A VIEW EXISTS OR NOT 
+
+
 USE => @includeIf
 Ex=> 
 @includeIf('common.thisViewIsNotThere') 
@@ -58,6 +77,8 @@ Ex=>
 {{-- @include('common.thisViewIsNotThere')  THIS WILL RESULT IN ERROR--}}
 <h1>Includeif can be used to check if a subview exists or not</h1>
 <h3>It checks for the particular view, if not found it helps in not getting any Error</h3>
+
+
 
 
 

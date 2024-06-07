@@ -1,5 +1,6 @@
                                             <--WHAT IS ROUTING-->
 
+
 Routes : The URL/Link to open any page which a user can see is known as the ROUTE
 
 Advance Routing features proivided by Laravel =>
@@ -7,7 +8,11 @@ Advance Routing features proivided by Laravel =>
 1.  remove the extension if required i.e. can use app/home instead of app/home.php
 2.  can open the file with a different named route apart from the filename
 
+
+
+
                                             <--HOW TO MAKE A ROUTE -->
+
 
 To create a new page :
 New File -> home.blade.php
@@ -34,7 +39,15 @@ we get : <h1>Home Page</h1>
 ON http://127.0.0.1:8000
 we get : <h1>Hello</h1>
 
+
+
+
+
+
+
+
                                             <--OPEN ANY VIEW WITH ROUTING -->
+
 
 In order to open a view, we have 2 methods
 
@@ -48,7 +61,13 @@ Route::view('/home' , 'home');
 {This shortcut method can only be used to open a view
 But, if we want to open any Controllers, we need to only use method 1}
 
+
+
+
+
+
                                     <--PASSING DATA IN ROUTING // RENDERING DYNAMIC CONTENT--->
+
 
 Make a new view : about.blade.php
 
@@ -74,7 +93,12 @@ Hello
 This is About Page
 Good to see you messi sir
 
+
+
+
+
                                     <--WORKING OF ANCHOR TAGS--->
+
 
 we use anchor tags to jump from one page to other
 this can also be done with the help of Routes
@@ -87,7 +111,14 @@ In our Starting welcome.blade.php page =>
 <a href="/home">Home</a>
 <a href="/about/sami">About Sami</a>
 
+
+
+
+
+
+
                                     <--OTHER ROUTING METHODS used in api and forms--->
+
 
 Route::get($uri, $callback);
 Route::post($uri, $callback);
@@ -95,6 +126,25 @@ Route::put($uri, $callback);
 Route::patch($uri, $callback);
 Route::delete($uri, $callback);
 Route::options($uri, $callback);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                                       CHAT GPT EXTERNAL NOTES
 

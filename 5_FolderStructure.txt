@@ -44,6 +44,23 @@ Now, we will get know the role of all the files/folders in our laravel project
 
 11. env file = contains all the secret passkeys
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 CHATGPT EXTERNAL NOTES
 
 ## Lecture Notes: Understanding the Laravel Folder Structure

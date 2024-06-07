@@ -12,7 +12,18 @@ A component is created in FRAMEWORKS and contains CODE OF THAT SPECIFIC LANGUAGE
 
 Example of COMPONENTS :  Messages like SUCCESS, ERROR, OOPS, ALERT on Login/SignUp/Any Finctionality like Buying a product,Return,Submit Form.....These Messages can be reused many times for different purposes. So to display the messages we can build them as a COMPONENT and reuse it
 
+
+
+
+
+
+
+
+
+
                             MAKING A NEW COMPONENT!!
+
+
 Here, we will make 3 components : SUCCESS, ALERT and WARNING
 
 first of all => php artisan make::component Messages
@@ -49,7 +60,19 @@ Thus, Here, In HOME.BLADE.PHP =>
 We write => <x-messages/>
 
 
+
+
+
+
+
+
+
+
+
+
                             PASSING DYNAMIC DATA IN THE SUCCESS COMPONET 
+
+
 create a new component => php artisan make:component dynamicCompWithData
 
 In dynamicCompWithData.blade.php => 
@@ -106,7 +129,20 @@ AND IN home.blade.php =>
 
 
 
+
+
+
+
+
+
+
+
+
+
                     PASSING DYNAMIC DATA and DYNAMIC CLASS NAME and CREATE ALL 3 COMPONENT Message 
+
+
+
 create a new component => php artisan make:component dynamicClassAllmsgs
 
 In dynamicClassAllmsgs.blade.php => 
@@ -181,6 +217,33 @@ AND IN home.blade.php =>
 <x-dynamicClassAllmsgs msg="ERROR - Invalid User" class="error"/> <br>  
 <x-dynamicClassAllmsgs msg="ALERT - This might be dangerous" class="alert"/>
 <br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

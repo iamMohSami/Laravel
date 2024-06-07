@@ -1,6 +1,6 @@
-Blade Template in Laravel
 
                                         WHATE IS BLADE TEMPLATE?
+
 
 Blade is a simple, yet powerful TEMPLTAING ENGINE for executing PHP code. This is included in the Laravel framework
 
@@ -13,13 +13,21 @@ Blade is a templating engine provided by Laravel, which allows you to write PHP 
 We can write PHP tags also in the blade template  
 To use blade template view should end with the .blade.php extension.
 
+
+
+
+
+
+
                                         WHY DO WE NEED BLADE TEMPLATE?
+
 
 Code Execution is faster as compared to normal PHP
 
 Faster Code Execution: Blade templates are compiled into plain PHP code and cached until they are modified, which makes them faster than regular PHP templates.
 Cleaner Syntax: Blade's syntax is more concise and easier to read compared to standard PHP.
 Separation of Concerns: Blade helps in maintaining a clean separation between the presentation layer and the business logic.
+
 
                                     CODE EXECUTION
 
@@ -78,6 +86,22 @@ In VIEW =>
     </h2>
 @endfor
 <hr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 CHATGPT EXTRA NOTES =>
 
