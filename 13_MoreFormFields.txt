@@ -1,0 +1,181 @@
+Here, we will add on additional fields to our previous form
+additional fileds => CheckBox, Radio button, Dropdowns, Range-Slider
+
+
+MAKE A NEW VIEW => 
+
+php artisan make:view userForm2
+
+In userForm2.blade.php => 
+
+<center>
+    <h1>NEW USER REGISTRATION</h1>
+
+    <form action="/newuserform2submit" method="post">
+        @csrf
+        <div class="formstyles">
+            <div class="formitems">
+                <input type="text" name="name" id="name" placeholder="Enter Name">
+            </div>
+            <div class="formitems">        
+                <input type="text" name="email" id="email" placeholder="Enter Email">
+            </div>
+            <div class="formitems"> 
+                <input type="text" name="city" id="city" placeholder="Enter City">
+            </div>  
+            <div class="formitems">
+                <label for="skills">Skills:</label><br>
+                <label><input type="checkbox" name="skills[]" value="PHP"> PHP</label>
+                <label><input type="checkbox" name="skills[]" value="C++"> C++</label>
+                <label><input type="checkbox" name="skills[]" value="Python"> Python</label>
+            </div>      
+            <div class="formitems">
+                <label for="gender">Gender:</label><br>
+                <label><input type="radio" name="gender" value="Male"> Male</label>
+                <label><input type="radio" name="gender" value="Female"> Female</label>
+            </div>
+            <div class="formitems">
+                <label for="actor">Fav Actor?</label><br>
+                <select name="actor" id="actor">
+                    <option value="Shah Rukh Khan">Shah Rukh Khan</option>
+                    <option value="Bilal Abbas Khan">Bilal Abbas Khan</option>
+                    <option value="Ranbir Kapoor">Ranbir Kapoor</option>
+                </select>
+            </div>
+            <div class="formitems">
+                <label for="salary">Salary Expectation:</label><br>
+                <input type="range" name="salary" id="salary" min="20000" max="100000" step="1000" oninput="this.nextElementSibling.value = this.value">
+                <output>20000</output>
+            </div>        
+            <div class="formitems">
+                <input type="submit" value="Submit">
+            </div>
+        </div>
+    </form>
+</center>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #1479de;
+    }
+    .formstyles {
+        width: 60%;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .formitems {
+        margin: 15px 0;
+        width: 100%;
+    }
+    input[type="text"], select, input[type="range"] {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    input[type="checkbox"], input[type="radio"] {
+        margin-right: 10px;
+    }
+    input[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+    label {
+        font-weight: bold;
+    }
+    .formitems label {
+        display: flex;
+        align-items: center;
+        margin: 5px 0;
+        cursor: pointer;
+    }
+    output {
+        display: inline-block;
+        width: 50px;
+        text-align: center;
+    }
+</style>
+
+
+
+in userController.php => 
+
+  function NewUserForm2 (Request $req) {
+        echo "Form Submitted Succesfully" ; 
+        echo '<br>' ; 
+        echo "Name : $req->name" ;
+        echo '<br>' ; 
+        echo "Email : $req->email" ;
+        echo '<br>' ; 
+        echo "City : $req->city" ;
+        echo '<br>';
+        echo "Gender : $req->gender" ;
+        echo '<br>';
+        echo "Fav Actor : $req->actor" ;
+        echo '<br>';
+        echo "Salary Expectation : $req->salary" ;
+        echo '<br>';
+        echo "Skills :"  ;
+        echo '<br>' ; 
+        print_r($req->skills);
+        
+    }
+
+
+In web.php => 
+
+use App\Http\Controllers\UserController;
+
+Route::view('/newuserform2', 'userForm2');
+Route::post('/newuserform2submit' , [userController::class , 'NewUserForm2']) ;
+
+
+
+VERY IMPORTANT NOTE => 
+
+1)while making the form, in the checkboxes fields, we used name="skills[]" i.e. AN ARRAY instead of name="skills" because when we try to access this field data, we can access an array of maximum 3 skills checked by the user, IF WE DIDNT USE ARRAY, Even if the user checked 2 or 3 boxes, we could only access ONLY ONE!!
+
+2) In NewUserForm2 function, we used ->          print_r($req->skills);
+we cant use "echo" to render a entire array
+need to use print_r to get the entire array 
+
+
+OUR FORM FINAL OUTPUT ON WEBPAGE => 
+
+route url -> http://127.0.0.1:8000/newuserform2submit
+Output -> 
+
+Form Submitted Succesfully
+Name : Mohammad Sami
+Email : choudharisami2004@gmail.com
+City : Mount Abu
+Gender : Male
+Fav Actor : Shah Rukh Khan
+Salary Expectation : 97000
+Skills :
+Array ( [0] => PHP [1] => C++ [2] => Python )
+
+
+
+
+
+
+
+
+
+
+
+ADDITIONAL CHATGPT NOTES => 
+
+

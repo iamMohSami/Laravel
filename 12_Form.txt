@@ -95,6 +95,9 @@ class UserController extends Controller
 
 B}}  Make form submit route.
 
+IN web.php, first we need to access that userController =>
+use App/Http/Controllers/userController
+
 IN web.php for making a new route => 
 Route::post('/newuserformsubmit', [UserController::class , 'NewUserForm'] );
 
