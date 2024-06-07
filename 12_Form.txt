@@ -1,0 +1,164 @@
+                                    STEPS FOR CREATING A FORM
+
+1) Make View and Route for view.
+
+php artisan make:view userForm
+
+and make a Route =>
+Route::view('/newuserform' , 'userForm');
+
+
+
+2) Make form and input fields.
+
+IN userForm.blade.php view => {create a form}
+
+<center>
+<h1>NEW USER REGISTRATION</h1>
+
+<form action="" method="post">                             // action attribute will be filled later, refer at last
+<div class="formstyles">
+        <div class="formitems">
+            <input type="text" name="name" id="name" placeholder="Enter Name">
+        </div>
+        <div class="formitems">        
+            <input type="text" name="email" id="email" placeholder="Enter Email">
+        </div>
+        <div class="formitems"> 
+            <input type="text" name="city" id="city" placeholder="Enter City">
+        </div>        
+        <div class="formitems">
+            <input type="submit" value="Submit">
+        </div>
+</div>
+</form>
+
+</center>
+
+<style>
+    .formstyles{
+    height: 50%;
+    width: 50%;
+    background-color: aqua;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    }
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+3) NOW, IF WE WANT TO SUBMIT THIS FORM AND ACCESS THE DETAILS FILLED IN IT, FOLLOW BELOW STEPS
+
+
+
+A}} Make a controller.
+
+php artisan make:controller userController
+
+THUS, IN app/http/controllers/userController.php file is made, in this userController.php file, MAKE A NEW FUNCTION=> 
+
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;  // by default 
+use Illuminate\Support\Facades\View ; //need to import this to use view::exists feature
+
+class UserController extends Controller
+{
+    function NewUserForm(){
+        echo "Form Submitted Succesfully" ; 
+    }
+}
+
+
+
+
+
+
+
+B}}  Make form submit route.
+
+IN web.php for making a new route => 
+Route::post('/newuserformsubmit', [UserController::class , 'NewUserForm'] );
+
+IMP POINTS TO NOTE HERE => 
+1) in our form, metod="post" , THUS WE MAKE A POST ROUTE HERE!!
+2) in our form, the action="", SHOULD MATCH WITH THE ROUTING URL WE GIVE HERE
+i.e.    <form action="/newuserformsubmit" method="post">
+WITHOUT THESE 2 POINTS, OUR FORM SUBMISSION WILL NOT WORK
+
+
+
+C}} use of @csrf 
+When we take care of all the about points and implement them carefully, on clicking submit button, we get 
+                            "419 - PAGE EXPIRED"         on webpage 
+THIS IS BECAUSE WE HAVE NOT USED "@csrf" in our form
+THUS , add a new line -> @csrf 
+just below the form tag 
+
+i.e. 
+<form action="/newuserformsubmit" method="post">
+    @csrf
+
+Now, the "419- PAGE EXPIRED" will be removed and we will get -> Form Submitted Succesfully on webpage as created in our controller function
+
+DETAILS ABOUT @csrf =>
+
+CSRF (Cross-Site Request Forgery) protection is enabled by default in Laravel. You need to include the @csrf directive within your form to generate a hidden input field with a CSRF token. This token is used to verify that the form submission is legitimate.
+
+Without the @csrf directive, you will encounter a "419 - PAGE EXPIRED" error. This directive ensures that your application is protected against CSRF attacks.
+
+
+
+
+
+
+
+4) Get form input field data 
+
+TO GET ENTIRE FORM DATA DEAILS AS JSON FORMAT use => 
+
+in contollers/userController.php , in our function, make these changes => 
+ function NewUserForm(Request $req){
+        echo "Form Submitted Succesfully" ; 
+        return $req ; 
+    }
+
+OUTPUT ON WEBPAGE, AFTER SUBMIT BUTTON IS CLICKED => 
+Form Submitted Succesfully{"_token":"YiL0wrhmCqC9mNp7PP800TYvVQx7h74mRB7333Lt","name":"Mohammad Sami","email":"choudharisami2004@gmail.com","city":"kOLKATA"}
+
+
+
+
+TO GET ALL THE FIELDS DATA INDIVIDUALLY use =>
+
+
+function NewUserForm(Request $req){
+        echo "Form Submitted Succesfully" ; 
+        echo '<br>' ; 
+        echo "Name : $req->name" ;
+        echo '<br>' ; 
+        echo "Email : $req->email" ;
+        echo '<br>' ; 
+        echo "City : $req->city" ;
+    }
+
+OUTPUT ON WEBPAGE, AFTER SUBMIT BUTTON IS CLICKED => 
+
+Form Submitted Succesfully
+Name : Mohammad Sami
+Email : choudharisami2004@gmail.com
+City : Miami
