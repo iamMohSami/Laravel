@@ -1,0 +1,328 @@
+Now, on our previous userForm2 , we will add certain Validations and learn how to print the error messages
+
+1}} VALIDATION Check | ADDING REQUIRED 
+
+ADDING "REQUIRED" i.e. COMPULSORY Fields VALIDATION IN OUR FORM => 
+
+IN userController.php , in our function NewuserForm2 =>
+
+
+function NewUserForm2 (Request $req) {
+
+//form validation lec 14
+        $req->validate([
+            'name'=>'required' ,
+            'email'=>'required' ,
+            'city'=>'required' ,
+            'gender'=>'required' ,             
+            'salary'=>'required'             
+        ]);
+
+echo.......
+}
+
+This will make these fields as REQUIRED and if we click submit button keeping these fields as EMPTY, then the form doesnt get submit and stays on the same page 
+
+
+
+2}} DISPLAYING THE ERRO MESSAGE ABOVE THE FORM 
+
+----> using {{print_r($errors)}} in our bladeview  <---
+
+ i.e. 
+     <h1>NEW USER REGISTRATION</h1>
+{{print_r($errors)}} ; 
+
+    <form action="/newuserform2submit" method="post"> ....
+
+
+ Output just above the form => 
+ Illuminate\Support\ViewErrorBag Object ( [bags:protected] => Array ( [default] => Illuminate\Support\MessageBag Object ( [messages:protected] => Array ( [name] => Array ( [0] => The name field is required. ) [email] => Array ( [0] => The email field is required. ) [city] => Array ( [0] => The city field is required. ) [gender] => Array ( [0] => The gender field is required. ) ) [format:protected] => :message ) ) ) 1 ;
+
+ BUT, THIS ERROR MESSAGE IS NOT EASY TO READ , SO WE DONT FOLLOW THIS METHOD
+
+
+ ---> using  if and foreach loop to properly display error msg <--
+
+i.e. in our blade view ,  we write => 
+
+<h1>NEW USER REGISTRATION</h1>
+
+    @if($error->any())
+        @foreach($error->all() as $err)
+            <div style="color:red"> {{$err}} </div>
+        @endforeach
+    @endif
+
+    <form action="/newuserform2submit" method="post"> ....
+
+ Output just above the form => 
+
+The name field is required.
+The email field is required.
+The city field is required.
+The gender field is required.
+
+3}} DISPLAYING THE ERROR MESSAGE JUST BELOW EACH INPUT Fields
+
+For this, we will be adding a "<span>" tag just below each input field 
+i.e.
+
+
+ <form action="/newuserform2submit" method="post">
+        @csrf
+        <div class="formstyles">
+            <div class="formitems">
+                <input type="text" name="name" id="name" placeholder="Enter Name">
+                <span class="errmsg">@error('name'){{$message}}@enderror</span>
+            </div>
+            <div class="formitems">        
+                <input type="text" name="email" id="email" placeholder="Enter Email">
+                <span class="errmsg">@error('email'){{$message}}@enderror</span>
+            </div>
+            <div class="formitems"> 
+                <input type="text" name="city" id="city" placeholder="Enter City">
+                <span class="errmsg">@error('city'){{$message}}@enderror</span>
+            </div>  
+            <div class="formitems">
+                <label for="skills">Skills:</label><br>
+                <label><input type="checkbox" name="skills[]" value="PHP"> PHP</label>
+                <label><input type="checkbox" name="skills[]" value="C++"> C++</label>
+                <label><input type="checkbox" name="skills[]" value="Python"> Python</label>
+                <span class="errmsg">@error('skills'){{$message}}@enderror</span>
+
+            </div>      
+            <div class="formitems">
+                <label for="gender">Gender:</label><br>
+                <label><input type="radio" name="gender" value="Male"> Male</label>
+                <label><input type="radio" name="gender" value="Female"> Female</label>
+                <span class="errmsg">@error('gender'){{$message}}@enderror</span>
+            </div>
+
+4}} ADDING MORE VALIDATION RULEs ALONG WITH THE REQUIRED FIELDS
+
+ $req->validate([
+            'name'=>'required | min:3 | max:50' ,
+            'email'=>'required | email' ,
+            'city'=>'required | max:15' ,
+            'gender'=>'required' ,                        
+        ]);
+
+
+
+
+ADDITIONAL CHATGPT NOTES => 
+
+### Lecture 14: Adding Form Validation in Laravel
+
+In this lecture, we will add validation rules to our existing `userForm2`, handle validation errors, and display these errors to the user.
+
+### Steps for Adding Validation
+
+#### **1) Adding Required Validation Rules**
+
+To ensure that certain fields in the form are not left empty, add validation rules in the `NewUserForm2` method in `UserController.php`.
+
+```php
+// app/Http/Controllers/UserController.php
+public function NewUserForm2(Request $request)
+{
+    // Form validation
+    $request->validate([
+        'name' => 'required',
+        'email' => 'required',
+        'city' => 'required',
+        'gender' => 'required',
+        'salary' => 'required'
+    ]);
+
+    // Processing form data
+    echo "Form Submitted Successfully";
+    echo '<br>';
+    echo "Name: " . $request->name;
+    echo '<br>';
+    echo "Email: " . $request->email;
+    echo '<br>';
+    echo "City: " . $request->city;
+    echo '<br>';
+    echo "Gender: " . $request->gender;
+    echo '<br>';
+    echo "Fav Actor: " . $request->actor;
+    echo '<br>';
+    echo "Salary Expectation: " . $request->salary;
+    echo '<br>';
+    echo "Skills: ";
+    echo '<br>';
+    print_r($request->skills);
+}
+```
+
+#### **2) Displaying Error Messages Above the Form**
+
+To display the error messages above the form, use the `@if` and `@foreach` directives in the blade template.
+
+```php
+<!-- resources/views/userForm2.blade.php -->
+<h1>NEW USER REGISTRATION</h1>
+
+@if ($errors->any())
+    @foreach ($errors->all() as $error)
+        <div style="color:red">{{ $error }}</div>
+    @endforeach
+@endif
+
+<form action="/newuserform2submit" method="post">
+    @csrf
+    <div class="formstyles">
+        <div class="formitems">
+            <input type="text" name="name" id="name" placeholder="Enter Name">
+        </div>
+        <div class="formitems">
+            <input type="text" name="email" id="email" placeholder="Enter Email">
+        </div>
+        <div class="formitems">
+            <input type="text" name="city" id="city" placeholder="Enter City">
+        </div>
+        <div class="formitems">
+            <label for="skills">Skills:</label><br>
+            <label><input type="checkbox" name="skills[]" value="PHP"> PHP</label>
+            <label><input type="checkbox" name="skills[]" value="C++"> C++</label>
+            <label><input type="checkbox" name="skills[]" value="Python"> Python</label>
+        </div>
+        <div class="formitems">
+            <label for="gender">Gender:</label><br>
+            <label><input type="radio" name="gender" value="Male"> Male</label>
+            <label><input type="radio" name="gender" value="Female"> Female</label>
+        </div>
+        <div class="formitems">
+            <label for="actor">Fav Actor?</label><br>
+            <select name="actor" id="actor">
+                <option value="Shah Rukh Khan">Shah Rukh Khan</option>
+                <option value="Bilal Abbas Khan">Bilal Abbas Khan</option>
+                <option value="Ranbir Kapoor">Ranbir Kapoor</option>
+            </select>
+        </div>
+        <div class="formitems">
+            <label for="salary">Salary Expectation:</label><br>
+            <input type="range" name="salary" id="salary" min="20000" max="100000" step="1000" oninput="this.nextElementSibling.value = this.value">
+            <output>20000</output>
+        </div>
+        <div class="formitems">
+            <input type="submit" value="Submit">
+        </div>
+    </div>
+</form>
+```
+
+#### **3) Displaying Error Messages Below Each Input Field**
+
+To display error messages just below each input field, use the `@error` directive.
+
+```php
+<!-- resources/views/userForm2.blade.php -->
+<form action="/newuserform2submit" method="post">
+    @csrf
+    <div class="formstyles">
+        <div class="formitems">
+            <input type="text" name="name" id="name" placeholder="Enter Name">
+            <span class="errmsg">@error('name'){{ $message }}@enderror</span>
+        </div>
+        <div class="formitems">
+            <input type="text" name="email" id="email" placeholder="Enter Email">
+            <span class="errmsg">@error('email'){{ $message }}@enderror</span>
+        </div>
+        <div class="formitems">
+            <input type="text" name="city" id="city" placeholder="Enter City">
+            <span class="errmsg">@error('city'){{ $message }}@enderror</span>
+        </div>
+        <div class="formitems">
+            <label for="skills">Skills:</label><br>
+            <label><input type="checkbox" name="skills[]" value="PHP"> PHP</label>
+            <label><input type="checkbox" name="skills[]" value="C++"> C++</label>
+            <label><input type="checkbox" name="skills[]" value="Python"> Python</label>
+            <span class="errmsg">@error('skills'){{ $message }}@enderror</span>
+        </div>
+        <div class="formitems">
+            <label for="gender">Gender:</label><br>
+            <label><input type="radio" name="gender" value="Male"> Male</label>
+            <label><input type="radio" name="gender" value="Female"> Female</label>
+            <span class="errmsg">@error('gender'){{ $message }}@enderror</span>
+        </div>
+        <div class="formitems">
+            <label for="actor">Fav Actor?</label><br>
+            <select name="actor" id="actor">
+                <option value="Shah Rukh Khan">Shah Rukh Khan</option>
+                <option value="Bilal Abbas Khan">Bilal Abbas Khan</option>
+                <option value="Ranbir Kapoor">Ranbir Kapoor</option>
+            </select>
+        </div>
+        <div class="formitems">
+            <label for="salary">Salary Expectation:</label><br>
+            <input type="range" name="salary" id="salary" min="20000" max="100000" step="1000" oninput="this.nextElementSibling.value = this.value">
+            <output>20000</output>
+            <span class="errmsg">@error('salary'){{ $message }}@enderror</span>
+        </div>
+        <div class="formitems">
+            <input type="submit" value="Submit">
+        </div>
+    </div>
+</form>
+```
+
+#### **4) Adding More Validation Rules**
+
+You can add additional validation rules to further refine the form's input requirements. Update the validation rules in the `NewUserForm2` method.
+
+```php
+// app/Http/Controllers/UserController.php
+public function NewUserForm2(Request $request)
+{
+    // Form validation with additional rules
+    $request->validate([
+        'name' => 'required|min:3|max:50',
+        'email' => 'required|email',
+        'city' => 'required|max:15',
+        'gender' => 'required',
+        'salary' => 'required'
+    ]);
+
+    // Processing form data
+    echo "Form Submitted Successfully";
+    echo '<br>';
+    echo "Name: " . $request->name;
+    echo '<br>';
+    echo "Email: " . $request->email;
+    echo '<br>';
+    echo "City: " . $request->city;
+    echo '<br>';
+    echo "Gender: " . $request->gender;
+    echo '<br>';
+    echo "Fav Actor: " . $request->actor;
+    echo '<br>';
+    echo "Salary Expectation: " . $request->salary;
+    echo '<br>';
+    echo "Skills: ";
+    echo '<br>';
+    print_r($request->skills);
+}
+```
+
+### **Summary and Additional Details**
+
+#### **Form Validation in Laravel**
+
+- **Adding Validation Rules**: Use the `validate` method to enforce rules on form inputs.
+- **Displaying Errors**: Errors can be displayed using `@if` and `@foreach` directives or the `@error` directive.
+- **Common Validation Rules**:
+  - `required`: Ensures the field is not empty.
+  - `min:length`: Specifies the minimum length of the input.
+  - `max:length`: Specifies the maximum length of the input.
+  - `email`: Ensures the input is a valid email address.
+  
+#### **Validation Flow**
+
+1. **Define Validation Rules**: In the controller method handling the form submission.
+2. **Apply Validation**: Laravel automatically checks the form data against the defined rules.
+3. **Handle Errors**: If validation fails, the user is redirected back to the form with error messages.
+4. **Display Errors**: Error messages can be displayed in the blade template.
+

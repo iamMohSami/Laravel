@@ -1,0 +1,231 @@
+In prev folder, we saw that, if there is any error in the validation of any input field, it shows an VALIDATION ERROR MESSAGE , which is defaulty stored
+i.e. If we leave an REQUIRED field EMPTY, we get the message => 
+"The :attribute field is required" 
+
+These default validation messages are prewritten and can be accessed by => 
+php artisan lang:publish 
+
+This will show you a new folder named "Lang" which has a file named "validation.php" which conrains all these messages
+ex =>    validation.php content=> 
+    'boolean' => 'The :attribute field must be true or false.',
+    'email' => 'The :attribute field must be a valid email address.',
+    'required' => 'The :attribute field is required.',
+AND MUCH MORE...................
+
+NOW, WE WILL STUDY =>
+1. HOW TO MAKE A CUSTOM ERROR MESSAGE
+2. HOW TO RETAIN THE OLD ENTERED VALUE EVEN WHEN WE GET AN ERROR
+3. CHANGING INPUT FIELD COLORS USING A HIDDEN class
+
+
+                        *******  1. HOW TO MAKE A CUSTOM ERROR MESSAGE *************
+
+PASS AN ARRAY AS EXTRA ATTRIBUTE IN THE VALIDATION =>
+in userController.php => 
+
+
+  function NewUserForm3(Request $req){
+
+    //CUSTOM ERROR MESSAGE after validation lec 15 and 16
+    $req->validate([
+        'name'=>'required | min:3 | max:50' ,
+        'email'=>'required | email' ,
+        'city'=>'required | max:15' ,
+        'gender'=>'required' ,                        
+    ] , [
+        'name.required'=>'Cant Be Empty..!!' , 
+        'name.min'=>'Should have more than 3 Characters..!!', 
+        'email.email'=>'Invalid Email Format..!!'
+    ]
+);
+
+    echo "Form Submitted Succesfully" .........
+
+    }
+
+
+
+              *******  2. HOW TO RETAIN THE OLD ENTERED VALUE EVEN WHEN WE GET AN ERROR  *************
+
+USE ==   value="{{old('attribute_name')}}"
+i.e. => 
+
+ <div class="formitems">
+                <input type="text" name="name" id="name" placeholder="Enter Name" value="{{old('name')}}">
+                <span class="errmsg">@error('name')*{{$message}}@enderror</span>
+            </div>
+            <div class="formitems">        
+                <input type="text" name="email" id="email" placeholder="Enter Email" value="{{old('email')}}">
+                <span class="errmsg">@error('email')*{{$message}}@enderror</span>
+            </div>
+            <div class="formitems"> 
+                <input type="text" name="city" id="city" placeholder="Enter City" value="{{old('city')}}">
+                <span class="errmsg">@error('city')*{{$message}}@enderror</span>
+            </div>  
+
+
+
+                            ******** 3. CHANGING INPUT FIELD COLORS USING A HIDDEN class *********
+
+THIS IS SOMETHING INTERESITING, FOR EACH OF OUR INPUT FIELD, we will give a class which only will be ACTIVATED/EXIST when the validation error occurs 
+
+The Class CSS STYLES => 
+.customErrHiddenClass{
+        border: 3px solid red ;
+        color: red ; 
+        background-color: rgb(230, 66, 66);
+    }
+
+
+Then in the input fields of the form add, 
+                        class="{{$errors->first('attribute_name')?'class_name':''}}" >
+
+i.e. => 
+
+ <div class="formitems">
+                <input type="text" name="name" id="name" placeholder="Enter Name" value="{{old('name')}}"
+                class="{{$errors->first('name')?'customErrHiddenClass':''}}" >
+                <span class="errmsg">@error('name')*{{$message}}@enderror</span>
+            </div>
+            <div class="formitems">        
+                <input type="text" name="email" id="email" placeholder="Enter Email" value="{{old('email')}}"
+                class="{{$errors->first('email')?'customErrHiddenClass':''}}" >
+                <span class="errmsg">@error('email')*{{$message}}@enderror</span>
+            </div>
+            <div class="formitems"> 
+                <input type="text" name="city" id="city" placeholder="Enter City" value="{{old('city')}}"
+                class="{{$errors->first('city')?'customErrHiddenClass':''}}" >
+                <span class="errmsg">@error('city')*{{$message}}@enderror</span>
+
+CODE EXPLANATION / SYNTAX EXPLANATION of this => 
+                        class="{{$errors->first('attribute_name')?'class_name':''}}" >
+
+
+
+
+
+
+ADDITIONAL CHATGPT NOTES => 
+
+### Custom Validation Error Messages and Enhancements
+
+In this section, we'll cover:
+
+1. Creating custom error messages.
+2. Retaining form input values when errors occur.
+3. Changing input field colors using a hidden class.
+
+### 1. Creating Custom Error Messages
+
+To customize error messages, you can pass an array as the second parameter to the `validate` method in the controller.
+
+#### Example in `UserController.php`:
+
+```php
+// app/Http/Controllers/UserController.php
+public function NewUserForm3(Request $request)
+{
+    // Custom error messages
+    $request->validate([
+        'name' => 'required|min:3|max:50',
+        'email' => 'required|email',
+        'city' => 'required|max:15',
+        'gender' => 'required',
+    ], [
+        'name.required' => 'Cant Be Empty..!!',
+        'name.min' => 'Should have more than 3 Characters..!!',
+        'email.email' => 'Invalid Email Format..!!'
+    ]);
+
+    // Processing form data
+    echo "Form Submitted Successfully";
+    // ...
+}
+```
+
+### 2. Retaining Old Input Values
+
+To retain old input values when validation errors occur, use the `old` helper function in the value attribute of your input fields.
+
+#### Example in Blade Template (`userForm2.blade.php`):
+
+```php
+<div class="formitems">
+    <input type="text" name="name" id="name" placeholder="Enter Name" value="{{ old('name') }}">
+    <span class="errmsg">@error('name')* {{ $message }}@enderror</span>
+</div>
+<div class="formitems">
+    <input type="text" name="email" id="email" placeholder="Enter Email" value="{{ old('email') }}">
+    <span class="errmsg">@error('email')* {{ $message }}@enderror</span>
+</div>
+<div class="formitems">
+    <input type="text" name="city" id="city" placeholder="Enter City" value="{{ old('city') }}">
+    <span class="errmsg">@error('city')* {{ $message }}@enderror</span>
+</div>
+```
+
+### 3. Changing Input Field Colors Using a Hidden Class
+
+You can add a CSS class to input fields conditionally, based on whether an error exists for that field.
+
+#### CSS for Error Styling:
+
+```css
+<style>
+.customErrHiddenClass {
+    border: 3px solid red;
+    color: red;
+    background-color: rgb(230, 66, 66);
+}
+</style>
+```
+
+#### Example in Blade Template (`userForm2.blade.php`):
+
+```php
+<div class="formitems">
+    <input type="text" name="name" id="name" placeholder="Enter Name" value="{{ old('name') }}"
+    class="{{ $errors->first('name') ? 'customErrHiddenClass' : '' }}">
+    <span class="errmsg">@error('name')* {{ $message }}@enderror</span>
+</div>
+<div class="formitems">
+    <input type="text" name="email" id="email" placeholder="Enter Email" value="{{ old('email') }}"
+    class="{{ $errors->first('email') ? 'customErrHiddenClass' : '' }}">
+    <span class="errmsg">@error('email')* {{ $message }}@enderror</span>
+</div>
+<div class="formitems">
+    <input type="text" name="city" id="city" placeholder="Enter City" value="{{ old('city') }}"
+    class="{{ $errors->first('city') ? 'customErrHiddenClass' : '' }}">
+    <span class="errmsg">@error('city')* {{ $message }}@enderror</span>
+</div>
+```
+
+### Explanation of the Class Syntax
+
+The syntax `class="{{ $errors->first('attribute_name') ? 'class_name' : '' }}"` works as follows:
+
+- `$errors->first('attribute_name')` checks if there is a validation error for the given attribute.
+- If there is an error, it returns `true` and applies the class `'class_name'`.
+- If there is no error, it returns `false`, and the class attribute is an empty string, so no additional class is applied.
+
+### Summary
+
+- **Custom Error Messages**: Define custom messages in the validation method to provide more user-friendly error feedback.
+- **Retaining Values**: Use `{{ old('attribute_name') }}` to repopulate form fields with the user's previous input after a validation error.
+- **Conditional Classes**: Dynamically add classes to input fields based on validation errors to visually indicate errors.
+
+### Additional Details
+
+1. **Publishing Language Files**:
+   - Run `php artisan lang:publish` to publish the language files, including validation messages, to the `resources/lang` directory. This allows you to customize global validation messages if needed.
+
+2. **Advanced Validation Rules**:
+   - You can use other validation rules like `regex`, `confirmed`, `unique`, and more for more complex validations.
+
+3. **Localization**:
+   - Custom validation messages can be localized for different languages by modifying the language files in the `resources/lang` directory.
+
+4. **Custom Validation Logic**:
+   - For more complex validation logic, you can create custom validation rules using Laravel's `Validator` class or even create custom rule objects.
+
+By mastering these aspects, you can create robust and user-friendly forms with comprehensive validation in Laravel.

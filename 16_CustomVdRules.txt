@@ -1,0 +1,40 @@
+For applying VALIDATION on the input field, we saw that we have a lot of options available in the lang/validation.php 
+predefined rules like : required,min,max,email 
+
+
+BUT, IF WE WANT CUSTOM RULES, FOR EXAMPLE, 
+The user input should entirely be CAPITAL only..!!!
+
+So, how to create such custom rules is what we gonna learn in this file
+
+
+1) php artisan make:rule Rule_name
+
+i.e. we do => php artisan make:rule upperCaseValidationRule
+
+This cmd will create a new folder named "Rules" and create this file init 
+
+PS C:\xampp\htdocs\MyProject> php artisan make:rule upperCaseValidationRule
+   INFO  Rule [C:\xampp\htdocs\MyProject\app\Rules\upperCaseValidationRule.php] created successfully.
+
+This file contents BY DEFAULT => 
+
+<?php
+namespace App\Rules;
+
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
+
+class upperCaseValidationRule implements ValidationRule
+{
+    /**
+     * Run the validation rule.
+     *
+     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     */
+    public function validate(string $attribute, mixed $value, Closure $fail): void
+    {
+        //
+    }
+}
+
