@@ -1,0 +1,66 @@
+Here, we will learn =
+
+
+1}What is URL Generation
+Displaying the browser URL on our webpage
+
+2}Get current URL and full URL 
+
+we have 2 methods for each which will give same output - 
+
+CURRENT URL -> 
+method1 = <h3>{{URL::current()}}</h3>
+method2 = <h3>{{url()->current()}}</h3>
+
+FULL URL  ->
+method1 = <h3>{{URL::full()}}</h3>
+method2 = <h3>{{url()->full()}}</h3>
+
+Difference bw these?
+CURRENT URL only gives the URL upto '?' and doest not include the extra parameters passed
+FULL URL gives the entire URL and also includes the extra parameters
+i.e 
+IF BROWSER URL => http://127.0.0.1:8000/home?name=Sami
+then,
+CURRENT URL OUTPUT => http://127.0.0.1:8000/home
+FULL URL OUTPUT => http://127.0.0.1:8000/home?name=sami
+
+
+
+3}Get the previous URL
+
+gives the previous URL from where the current URL is reached
+
+method1 = <h3>{{URL::previous()}}</h3>
+method2 = <h3>{{url()->previous()}}</h3>
+
+4}Make link URL
+
+We have learned about ANCHOR TAGS i.e. 
+
+we use anchor tags to jump from one page to other
+this can also be done with the help of Routes
+
+In our Starting welcome.blade.php page =>
+<h1>Hello </h1>
+<h3>Click below to go on other Pages</h3>
+<a href="/home">Home</a>
+<a href="/about/sami">About Sami</a>
+
+THE SAME THING CAN BE IMPLEMENTED USING 
+<a href="{{URL::to('home)}}">Home</a>
+
+5}Make URL with child path
+
+<a href="/about/sami">About Sami</a>
+
+This can be IMPLEMENTED as=> 
+
+Route::view('/about/{name}' , 'about') ; 
+
+and 
+
+<a href="{{URL::to('about' , ['sami'])}}">About Sami</a>
+
+
+
