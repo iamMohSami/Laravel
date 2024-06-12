@@ -1,0 +1,684 @@
+WHAT IS A MIDDLEWARE??
+Middleware is a layer between the user and Application.
+Here we can check conditions or filter user requests. 
+If condition pass  request will reach to Controller/View 
+
+WITHOUT A MIDDLEWARE => 
+request --> Controller  (req directly goes to the controller)
+
+WITH A MIDDLEWARE => 
+request --> middleware -->  Controller 
+(the req first reaches the middleware, it verifies the req based on specific conditions and filters, if PASSED, the req is redirected to the controller, if FAILED, it is sent back and discarded)
+
+
+
+
+WHAT TYPE OF CONDITIONS OR FILTERS DOES THE MIDDLEWARE CHECKS??
+1. To check whether user is LOGGED IN or not before accessing that webpage
+2. wanna block specific users 
+
+
+
+
+THREE TYPES OF MIDDLEWARE => 
+
+1.Global Middleware = applies on entire application by default
+2.Route Middleware = applies on specific number of routes
+3.Group Middleware  = coupling more than one middleware together 
+
+
+
+HOW TO MAKE A MIDDLEWARE??
+
+php artisan make:middleware NAMEOFMIDDLEWARE 
+
+i.e. 
+php artisan make:middleware AgeCheck 
+
+
+THIS CREATES A NEW FOLDER "Middleware" in the Http main folder and contains the file "AgeCheck.php" with default content => 
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class AgeCheck
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        return $next($request);
+    }
+}
+
+
+
+NOW, FOR A BASIC TEST OF OUR MIDDLEWARE, LETS ADD A ECHO STATEMENT TO OUR MIDDLEWARE => 
+
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class AgeCheck
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        echo "Hi from Middleware" ; 
+        return $next($request);
+    }
+}
+
+
+HOW TO APPLY THIS MIDDLEWARE???? 
+
+In Bootstrap folder, we have a file named "app.php" with default content => 
+
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        //
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        //
+    })->create();
+
+
+
+THINGS TO ADD INIT => 
+1. use namespace i.e. "use App\Http\Middleware\AgeCheck;" 
+2. middleware i.e. "$middleware->append(AgeCheck::class)" 
+
+thus, new updated code in app.php => 
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\AgeCheck;
+
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        //
+        $middleware->append(AgeCheck::class) ; 
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        //
+    })->create();
+
+
+
+NOW, WHEN WE OPEN OUR VIEWS ON THE BROWSER, WE FIND THIS ECHO STATEMENT FROM THIS MIDDLEWARE ON ALL THE WEBPAGES AS THIS ACTS AS A GLOBAL MIDDLEWARE..!!!!!
+
+
+ADDING AgeCheck functionality => 
+
+lets add a age parameter in our browser url
+IN OUR BROWSER, path =>   http://127.0.0.1:8000/home?age=20
+
+
+TO ACCESS ALL THE PARAMETER INSERTED BY USER, we use "$request" with a "<pre>" tag for proper formatting 
+i.e. => 
+class AgeCheck
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        echo "Hi from Middleware" ; 
+        echo "<pre>" ; 
+        print_r($request) ; 
+        return $next($request);
+    }
+}
+
+
+In Browser => ON URL http://127.0.0.1:8000/home?age=20
+Hi from Middleware
+Illuminate\Http\Request Object
+(
+    [attributes] => Symfony\Component\HttpFoundation\ParameterBag Object
+        (
+            [parameters:protected] => Array
+                (
+                )
+
+        )
+
+    [request] => Symfony\Component\HttpFoundation\InputBag Object
+        (
+            [parameters:protected] => Array
+                (
+                )
+
+        )
+
+    [query] => Symfony\Component\HttpFoundation\InputBag Object
+        (
+            [parameters:protected] => Array
+                (
+                    [age] => 20
+                )
+
+        )
+
+    [server] => Symfony\Component\HttpFoundation\ServerBag Object
+        (
+            [parameters:protected] => Array
+                (
+                    [DOCUMENT_ROOT] => C:\xampp\htdocs\MyProject\public
+                    [REMOTE_ADDR] => 127.0.0.1
+                    [REMOTE_PORT] => 64776
+                    [SERVER_SOFTWARE] => PHP 8.2.12 Development Server
+                    [SERVER_PROTOCOL] => HTTP/1.1
+                    [SERVER_NAME] => 127.0.0.1
+                    [SERVER_PORT] => 8000
+                    [REQUEST_URI] => /home?age=20
+                    [REQUEST_METHOD] => GET
+                    [SCRIPT_NAME] => /index.php
+                    [SCRIPT_FILENAME] => C:\xampp\htdocs\MyProject\public\index.php
+                    [PATH_INFO] => /home
+                    [PHP_SELF] => /index.php/home
+                    [QUERY_STRING] => age=20
+                    [HTTP_HOST] => 127.0.0.1:8000
+                    [HTTP_CONNECTION] => keep-alive
+                    [HTTP_CACHE_CONTROL] => max-age=0
+                    [HTTP_SEC_CH_UA] => "Brave";v="125", "Chromium";v="125", "Not.A/Brand";v="24"
+                    [HTTP_SEC_CH_UA_MOBILE] => ?0
+                    [HTTP_SEC_CH_UA_PLATFORM] => "Windows"
+                    [HTTP_UPGRADE_INSECURE_REQUESTS] => 1
+                    [HTTP_USER_AGENT] => Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+                    [HTTP_ACCEPT] => text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8
+                    [HTTP_SEC_GPC] => 1
+                    [HTTP_ACCEPT_LANGUAGE] => en-US,en
+                    [HTTP_SEC_FETCH_SITE] => none
+                    [HTTP_SEC_FETCH_MODE] => navigate
+                    [HTTP_SEC_FETCH_USER] => ?1
+                    [HTTP_SEC_FETCH_DEST] => document
+                    [HTTP_ACCEPT_ENCODING] => gzip, deflate, br, zstd
+                    [HTTP_COOKIE] => XSRF-TOKEN=eyJpdiI6IkNvSnVmUlYrUnZuZS93dlN0T0xpL0E9PSIsInZhbHVlIjoidHlpVURhKzlOdHZ5MWZyaVh2QWQrYlQ3Y1VIem5QNHduUnprakhYL2JSNVFxRVVkVzlQeVcrYnh3Q0QzNVdVb0ZXaWcxYzM3UWNiZHVvYUNMR1R5WWZFN3ZUblNPbUxoNzlsODRueC9pVmVxb1FsOXpiN2FRN2IzL2FCcUhHY0QiLCJtYWMiOiJlN2RhNWViOTVhN2ZiYzM4ODE3YmE3YTVhNjk5ZGE3NGU2N2FmNmFiN2MxMTllNWEyMGZiY2IxYTIxNzAyM2ZlIiwidGFnIjoiIn0%3D; laravel_session=eyJpdiI6IklCUGV4NTVLdkcxWlpXNklaeDFPMWc9PSIsInZhbHVlIjoiblVOUko4a1M2UFE2YjVZaFJEeHdGU0VxUFlzQUxVOUdXMGZhVm9zVXNtbU1yQkdWT2ErU3lza2RjRk0xdFBlRmNXOWFNSFFmd3JQNXpBcXRpN1hCdEdHdU80TFpkOWJQLzROajhGamVRb1dlRytia2ZOczlHdDE5UjZxTS9nTzUiLCJtYWMiOiIxMzYyNzRiNDRiODdkM2QxNmU4MGNiMjMyYjMyMTNmM2M3NTg5MjA5M2YwYzk3MGMwNWIzYmQyOGEwYWVhMjZhIiwidGFnIjoiIn0%3D
+                    [REQUEST_TIME_FLOAT] => 1718199420.4692
+                    [REQUEST_TIME] => 1718199420
+                )
+
+        )
+
+    [files] => Symfony\Component\HttpFoundation\FileBag Object
+        (
+            [parameters:protected] => Array
+                (
+                )
+
+        )
+
+    [cookies] => Symfony\Component\HttpFoundation\InputBag Object
+        (
+            [parameters:protected] => Array
+                (
+                    [XSRF-TOKEN] => eyJpdiI6IkNvSnVmUlYrUnZuZS93dlN0T0xpL0E9PSIsInZhbHVlIjoidHlpVURhKzlOdHZ5MWZyaVh2QWQrYlQ3Y1VIem5QNHduUnprakhYL2JSNVFxRVVkVzlQeVcrYnh3Q0QzNVdVb0ZXaWcxYzM3UWNiZHVvYUNMR1R5WWZFN3ZUblNPbUxoNzlsODRueC9pVmVxb1FsOXpiN2FRN2IzL2FCcUhHY0QiLCJtYWMiOiJlN2RhNWViOTVhN2ZiYzM4ODE3YmE3YTVhNjk5ZGE3NGU2N2FmNmFiN2MxMTllNWEyMGZiY2IxYTIxNzAyM2ZlIiwidGFnIjoiIn0=
+                    [laravel_session] => eyJpdiI6IklCUGV4NTVLdkcxWlpXNklaeDFPMWc9PSIsInZhbHVlIjoiblVOUko4a1M2UFE2YjVZaFJEeHdGU0VxUFlzQUxVOUdXMGZhVm9zVXNtbU1yQkdWT2ErU3lza2RjRk0xdFBlRmNXOWFNSFFmd3JQNXpBcXRpN1hCdEdHdU80TFpkOWJQLzROajhGamVRb1dlRytia2ZOczlHdDE5UjZxTS9nTzUiLCJtYWMiOiIxMzYyNzRiNDRiODdkM2QxNmU4MGNiMjMyYjMyMTNmM2M3NTg5MjA5M2YwYzk3MGMwNWIzYmQyOGEwYWVhMjZhIiwidGFnIjoiIn0=
+                )
+
+        )
+
+    [headers] => Symfony\Component\HttpFoundation\HeaderBag Object
+        (
+            [headers:protected] => Array
+                (
+                    [host] => Array
+                        (
+                            [0] => 127.0.0.1:8000
+                        )
+
+                    [connection] => Array
+                        (
+                            [0] => keep-alive
+                        )
+
+                    [cache-control] => Array
+                        (
+                            [0] => max-age=0
+                        )
+
+                    [sec-ch-ua] => Array
+                        (
+                            [0] => "Brave";v="125", "Chromium";v="125", "Not.A/Brand";v="24"
+                        )
+
+                    [sec-ch-ua-mobile] => Array
+                        (
+                            [0] => ?0
+                        )
+
+                    [sec-ch-ua-platform] => Array
+                        (
+                            [0] => "Windows"
+                        )
+
+                    [upgrade-insecure-requests] => Array
+                        (
+                            [0] => 1
+                        )
+
+                    [user-agent] => Array
+                        (
+                            [0] => Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+                        )
+
+                    [accept] => Array
+                        (
+                            [0] => text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8
+                        )
+
+                    [sec-gpc] => Array
+                        (
+                            [0] => 1
+                        )
+
+                    [accept-language] => Array
+                        (
+                            [0] => en-US,en
+                        )
+
+                    [sec-fetch-site] => Array
+                        (
+                            [0] => none
+                        )
+
+                    [sec-fetch-mode] => Array
+                        (
+                            [0] => navigate
+                        )
+
+                    [sec-fetch-user] => Array
+                        (
+                            [0] => ?1
+                        )
+
+                    [sec-fetch-dest] => Array
+                        (
+                            [0] => document
+                        )
+
+                    [accept-encoding] => Array
+                        (
+                            [0] => gzip, deflate, br, zstd
+                        )
+
+                    [cookie] => Array
+                        (
+                            [0] => XSRF-TOKEN=eyJpdiI6IkNvSnVmUlYrUnZuZS93dlN0T0xpL0E9PSIsInZhbHVlIjoidHlpVURhKzlOdHZ5MWZyaVh2QWQrYlQ3Y1VIem5QNHduUnprakhYL2JSNVFxRVVkVzlQeVcrYnh3Q0QzNVdVb0ZXaWcxYzM3UWNiZHVvYUNMR1R5WWZFN3ZUblNPbUxoNzlsODRueC9pVmVxb1FsOXpiN2FRN2IzL2FCcUhHY0QiLCJtYWMiOiJlN2RhNWViOTVhN2ZiYzM4ODE3YmE3YTVhNjk5ZGE3NGU2N2FmNmFiN2MxMTllNWEyMGZiY2IxYTIxNzAyM2ZlIiwidGFnIjoiIn0%3D; laravel_session=eyJpdiI6IklCUGV4NTVLdkcxWlpXNklaeDFPMWc9PSIsInZhbHVlIjoiblVOUko4a1M2UFE2YjVZaFJEeHdGU0VxUFlzQUxVOUdXMGZhVm9zVXNtbU1yQkdWT2ErU3lza2RjRk0xdFBlRmNXOWFNSFFmd3JQNXpBcXRpN1hCdEdHdU80TFpkOWJQLzROajhGamVRb1dlRytia2ZOczlHdDE5UjZxTS9nTzUiLCJtYWMiOiIxMzYyNzRiNDRiODdkM2QxNmU4MGNiMjMyYjMyMTNmM2M3NTg5MjA5M2YwYzk3MGMwNWIzYmQyOGEwYWVhMjZhIiwidGFnIjoiIn0%3D
+                        )
+
+                )
+
+            [cacheControl:protected] => Array
+                (
+                    [max-age] => 0
+                )
+
+        )
+
+    [content:protected] => 
+    [languages:protected] => 
+    [charsets:protected] => 
+    [encodings:protected] => 
+    [acceptableContentTypes:protected] => 
+    [pathInfo:protected] => /home
+    [requestUri:protected] => /home?age=20
+    [baseUrl:protected] => 
+    [basePath:protected] => 
+    [method:protected] => 
+    [format:protected] => 
+    [session:protected] => 
+    [locale:protected] => 
+    [defaultLocale:protected] => en
+    [preferredFormat:Symfony\Component\HttpFoundation\Request:private] => 
+    [isHostValid:Symfony\Component\HttpFoundation\Request:private] => 1
+    [isForwardedValid:Symfony\Component\HttpFoundation\Request:private] => 1
+    [trustedValuesCache:Symfony\Component\HttpFoundation\Request:private] => Array
+        (
+        )
+
+    [isIisRewrite:Symfony\Component\HttpFoundation\Request:private] => 
+    [json:protected] => 
+    [convertedFiles:protected] => 
+    [userResolver:protected] => 
+    [routeResolver:protected] => 
+)
+
+    
+This is HEADER
+.......................
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ IN ORDER TO JUST ACCESS AGE FROM THE URL, WE DO => 
+
+ class AgeCheck
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        echo "Hi from Middleware" ; 
+        echo "<pre>" ; 
+        print_r($request->age) ; 
+        return $next($request);
+    }
+}
+
+In browser , on url http://127.0.0.1:8000/home?age=20 
+we have,
+Hi from Middleware
+20
+
+    
+This is HEADER
+
+...................
+
+
+NOW, APPLYING THE AGE>18 CHECK => 
+
+class AgeCheck
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        echo "Hi from Middleware" ; 
+        echo "<pre>" ; 
+        print_r($request->age) ; 
+        if($request->age < 18){
+            die("You must be above 18 age to visit this website") ; 
+        }
+        return $next($request);
+    }
+}
+
+
+THUS, ON BROWSER, 
+
+ON URL => http://127.0.0.1:8000/home?age=23
+BROWSER => 
+
+Hi from Middleware
+23
+
+    
+This is HEADER
+................
+
+
+
+ON URL => http://127.0.0.1:8000/home?age=15
+BROWSER => 
+Hi from Middleware
+15You must be above 18 age to visit this website
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ADDITIONAL CHATGPT NOTES : 
+
+
+### Understanding Middleware in Laravel
+
+Middleware acts as a filter for HTTP requests entering your application. It's an essential feature in Laravel that allows you to check conditions or apply logic before a request reaches your application's controllers.
+
+#### Middleware Flow
+
+- **Without Middleware**:
+  ```
+  request --> Controller
+  ```
+
+- **With Middleware**:
+  ```
+  request --> Middleware --> Controller
+  ```
+
+Middleware verifies requests based on specific conditions and either allows them to proceed to the controller or blocks them if they don't meet the criteria.
+
+### Conditions or Filters Middleware Checks
+
+1. **Authentication**: Check if the user is logged in.
+2. **Authorization**: Ensure the user has the necessary permissions.
+3. **Rate Limiting**: Limit the number of requests from a user.
+4. **IP Whitelisting**: Allow only certain IP addresses.
+5. **Maintenance Mode**: Block access when the application is under maintenance.
+6. **Custom Logic**: Any other business-specific checks, like checking user age, subscription status, etc.
+
+### Types of Middleware
+
+1. **Global Middleware**:
+   - Applies to every HTTP request.
+   - Typically defined in `app/Http/Kernel.php`.
+
+2. **Route Middleware**:
+   - Applies to specific routes.
+   - Defined in `app/Http/Kernel.php` and applied using the `middleware` method in routes or controllers.
+
+3. **Group Middleware**:
+   - A combination of multiple middleware applied to a group of routes.
+   - Defined using route groups in `routes/web.php` or `routes/api.php`.
+
+### Creating Middleware
+
+You can create middleware using the Artisan command:
+
+```bash
+php artisan make:middleware AgeCheck
+```
+
+This command generates a new middleware file in the `app/Http/Middleware` directory. Here's the initial content of the generated file:
+
+```php
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class AgeCheck
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        return $next($request);
+    }
+}
+```
+
+### Applying Middleware
+
+#### Global Middleware
+
+To apply middleware globally, you need to append it to the `$middleware` array in `app/Http/Kernel.php`:
+
+```php
+protected $middleware = [
+    // Other middleware
+    \App\Http\Middleware\AgeCheck::class,
+];
+```
+
+#### Route Middleware
+
+To apply middleware to specific routes, first register it in the `$routeMiddleware` array in `app/Http/Kernel.php`:
+
+```php
+protected $routeMiddleware = [
+    'age.check' => \App\Http\Middleware\AgeCheck::class,
+];
+```
+
+Then, apply it to routes in `routes/web.php` or `routes/api.php`:
+
+```php
+Route::get('home', [HomeController::class, 'index'])->middleware('age.check');
+```
+
+#### Group Middleware
+
+To apply multiple middleware to a group of routes:
+
+```php
+Route::middleware(['auth', 'age.check'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index']);
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+});
+```
+
+### Example: Age Check Middleware
+
+Let's implement an age check in the `AgeCheck` middleware:
+
+```php
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class AgeCheck
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        if ($request->age < 18) {
+            return response('You must be above 18 to visit this website', 403);
+        }
+
+        return $next($request);
+    }
+}
+```
+
+### Adding Age Parameter Check
+
+To check the `age` parameter in the URL:
+
+```php
+public function handle(Request $request,
+
+Closure $next): Response
+{
+    if ($request->age < 18) {
+        return response('You must be above 18 to visit this website', 403);
+    }
+
+    return $next($request);
+}
+```
+
+### Summary
+
+Middleware is a critical part of Laravel applications, providing a way to filter HTTP requests entering your application. It can be used to enforce various checks such as authentication, authorization, rate limiting, and custom logic. Middleware can be applied globally, to specific routes, or as part of a group of middleware.
+
+#### Key Points:
+
+1. **Middleware Structure**: Middleware handles the incoming request and can terminate it or pass it to the next layer.
+2. **Creating Middleware**: Use `php artisan make:middleware` to create new middleware.
+3. **Global Middleware**: Applied to all routes, defined in `app/Http/Kernel.php`.
+4. **Route Middleware**: Applied to specific routes, defined and registered in `app/Http/Kernel.php`.
+5. **Group Middleware**: Combines multiple middleware for a group of routes, defined in route files.
+
+#### Additional Details for Deep Knowledge:
+
+- **Middleware Parameters**: Middleware can accept parameters, enhancing their flexibility. For example, you can pass a role to a role-checking middleware.
+- **Terminating Middleware**: Middleware can be terminating, meaning it does some work after the response has been sent to the user.
+- **Custom Responses**: Middleware can return custom responses if a condition is not met, like redirecting to a login page or returning an error message.
+- **Ordering**: The order of middleware execution is important. Middleware registered globally in `app/Http/Kernel.php` are executed in the order they are listed.
+
+Middleware in Laravel offers a robust and flexible way to manage your application's request lifecycle, ensuring that only valid and authorized requests reach your controllers. By understanding and utilizing middleware effectively, you can build more secure and maintainable applications.
