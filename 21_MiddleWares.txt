@@ -682,3 +682,100 @@ Middleware is a critical part of Laravel applications, providing a way to filter
 - **Ordering**: The order of middleware execution is important. Middleware registered globally in `app/Http/Kernel.php` are executed in the order they are listed.
 
 Middleware in Laravel offers a robust and flexible way to manage your application's request lifecycle, ensuring that only valid and authorized requests reach your controllers. By understanding and utilizing middleware effectively, you can build more secure and maintainable applications.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+In a typical Laravel application, middleware is registered in the `app/Http/Kernel.php` file, not in `bootstrap/app.php`. Here's how you can correctly set up and register your middleware in `Kernel.php`.
+
+1. **Create Middleware:**
+
+```bash
+php artisan make:middleware AgeCheck
+```
+
+2. **Modify the Middleware:**
+
+Edit the `handle` method in `app/Http/Middleware/AgeCheck.php`:
+
+```php
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class AgeCheck
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        if ($request->age < 18) {
+            return response('You must be above 18 to visit this website', 403);
+        }
+
+        return $next($request);
+    }
+}
+```
+
+3. **Register Middleware in `Kernel.php`:**
+
+Open `app/Http/Kernel.php` and add your middleware to the `$routeMiddleware` array:
+
+```php
+protected $routeMiddleware = [
+    // other middleware
+    'age.check' => \App\Http\Middleware\AgeCheck::class,
+];
+```
+
+4. **Apply Middleware to Routes:**
+
+In your routes file (typically `routes/web.php`), apply the middleware to specific routes:
+
+```php
+Route::get('/home', function () {
+    // Your controller or view logic
+})->middleware('age.check');
+```
+
+### Summary of Steps:
+
+1. **Create Middleware**: Use `php artisan make:middleware AgeCheck`.
+2. **Edit Middleware**: Add your age-checking logic.
+3. **Register Middleware**: Add to `$routeMiddleware` in `app/Http/Kernel.php`.
+4. **Apply Middleware**: Use the middleware in your routes.
+
+By following these steps, you ensure that the middleware is correctly created, registered, and applied to your routes. This setup allows you to enforce the age check on any route you choose.

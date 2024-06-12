@@ -1,0 +1,120 @@
+MIDDLEWARE GROUP 
+
+
+What is Middleware Group? 
+Grouping of two or more Middlewares together to apply them all together for one route or a group of many routes 
+i.e.
+Middleware can apply on Single Route : If we want 10(for ex) Middlewares to apply on a single route, instead of assigning each middleware to that route individually, we make a MIDDLEWARE GROUP of that 10 Middlewares and apply it 
+
+Middleware can apply on Route Group: If we want one middleware to apply to 10(for ex) routes
+
+Middleware can apply on all Route : Global Middleware like prev lecture
+
+
+How to make Middleware group?
+
+Consider we make 2 middlewares AgeCheck and CountryCheck 
+
+php artisan make:middleware AgeCheck
+
+class AgeCheck
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        if($request->age < 18) {
+            die('You cannot access the webpage coz you are below 18 age') ; 
+        }
+        echo "Age = " ; 
+        echo $request->age ; 
+        echo "<br>" ;  
+        return $next($request);
+    }
+}
+
+php artisan make:middleware CountryCheck
+
+class CountryCheck
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        if($request->country != 'india') {
+            die('You cannot access the webpage coz you are not from INDIA') ; 
+        }
+        echo "Country = " ; 
+        echo $request->country ; 
+        echo "<br>" ;  
+        return $next($request);
+    }
+}
+
+
+IN bootstrap/app.php => 
+
+    use App\Http\Middleware\AgeCheck ; 
+    use App\Http\Middleware\CountryCheck ; 
+
+  ->withMiddleware(function (Middleware $middleware) {
+        //
+        $middleware->appendToGroup('check1' , [
+                AgeCheck::class , 
+                CountryCheck::class , 
+        ]) ; 
+    })
+
+
+
+                         **   APPLYING  GROUP OF MIDDLEWARES TO A SINGLE ROUTE **
+consider we have a new route middlewareCheck.blade.php => 
+<div>
+    <h3>Successfully passed the Middleware Check</h3>
+</div>
+
+
+In web.php => 
+Route::view('/middleware' , 'middlewareCheck')->middleware('check1') ; 
+
+
+THUS, THIS Successfully ASSIGNES THE GROUP OF 2 MIDDLEWARES TO THIS SINGLE ROUTE 
+
+
+
+VERY IMPORTANT NOTE=> 
+ IF we want just one global middleware, then there is no need in specifying/assigning it in web.php file, as explained in the #23 video
+i.e.
+
+if we do : 
+$middleware->append(AgeCheck::class)
+Then, no need of "web.php" file, it gets assigned to all routes as a Global Middleware
+
+wheres,
+
+if we do  a GROUP OF MIDDLEARES: 
+$middleware->appendToGroup('check1' , [
+AgeCheck::class , 
+CountryCheck::class,
+])
+
+Then, we NEED to assign it in the web.php file => 
+Route::view('home' , 'home')->middleware('check1') 
+
+
+
+                         **   APPLYING  GROUP OF MIDDLEWARES TO GROUP OF MANY ROUTES **
+
+Route::middleware('check1')->group(function(){
+    Route::view('/middleware' , 'middlewareCheck'); 
+    Route::view('/route1' , 'middlewareCheck'); 
+    Route::view('/route2' , 'middlewareCheck'); 
+    Route::view('/route3' , 'middlewareCheck'); 
+    Route::view('/route4' , 'middlewareCheck'); ...........
+})
