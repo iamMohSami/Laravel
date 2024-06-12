@@ -1,0 +1,140 @@
+Here, we will use MySQL for DB connection with Laravel 
+(MySQL is widely preferred and used with Laravel applications over other DB options like MongoDB or others)
+(In Later Lectures, we will also learn how to connect to other DBs with our Laravel app)
+
+STEPS : 
+1.Make Database
+2.Update Env file
+3.Run migration 
+4.Make controller and route 
+5.Get data from the database
+
+
+
+STEP 1 =>  Make a new DB named "LearnLaravel" using phpmyadmin 
+
+STEP 2 => Update .env file and make sure the code is : 
+            DB_CONNECTION=mysql
+            DB_HOST=127.0.0.1
+            DB_PORT=3306
+            DB_DATABASE=LearnLaravel
+            DB_USERNAME=root
+            DB_PASSWORD=
+
+STEP 3 => Run Migration 
+
+If you dont run migration, and serve ur app with only 2 STEPs above, you will get an error : 
+ERROR : 
+
+Internal Server Error
+
+Illuminate\Database\QueryException
+SQLSTATE[42S02]: Base table or view not found: 1146 Table 'learnlaravel.sessions' doesn't exist (Connection: mysql, SQL: select * from `sessions` where `id` = wSQIAzD3QFMJGugRBu2ZmpVYSRU9fFPOYRRZMmef limit 1)
+
+THUS, to remove this, we run MIGRATION by using : 
+php artisan migrate 
+
+IMP NOTEE => 
+Before migration, you will see that your DB is completely EMPTY and has NO TABLES initial
+After running migration, you will see many TABLES init 
+
+
+
+STEP 4 => Make Controller and Route 
+
+php artisan make:controller UserController 
+
+in UserController.php file => 
+
+function users(){
+    return "users data" ; 
+}
+
+in web.php file => 
+
+use App\Http\Controller\UserController ; 
+
+Route::get('userlist' , [UserController::class , 'users']) ; 
+
+
+
+STEP 5 => Get Data from DB
+
+Lets get data from the "users" table in our LearnLaravel DB 
+By default, the "users" table is empty, so using phpmyadmin, lets add some data in the table 
+
+IN UserController.php => 
+
+use Illuminate\Support\Facades\DB  ;
+
+
+function users(){
+    return DB::select('select * from users'); 
+}
+
+IN web.php => 
+Route::get('/userlist' , [UserController::class , 'userlist']) ;
+
+ON BROWSER => http://127.0.0.1:8000/userlist
+
+OUTPUT => 
+[
+  {
+    "id": 1,
+    "name": "Mohammad Sami",
+    "email": "mohsami@test.com",
+    "email_verified_at": null,
+    "password": "1234",
+    "remember_token": null,
+    "created_at": "2024-06-12 20:55:35",
+    "updated_at": "2024-06-12 20:55:35"
+  },
+  {
+    "id": 2,
+    "name": "Shah Rukh Khan",
+    "email": "kingkhan@test.com",
+    "email_verified_at": null,
+    "password": "9999",
+    "remember_token": null,
+    "created_at": "2024-06-12 20:56:23",
+    "updated_at": "2024-06-12 20:56:23"
+  },
+  {
+    "id": 3,
+    "name": "Leo Messi",
+    "email": "goat@test.com",
+    "email_verified_at": null,
+    "password": "2023",
+    "remember_token": null,
+    "created_at": "2024-06-12 20:57:17",
+    "updated_at": "2024-06-12 20:57:17"
+  }
+]
+
+This 5 STEPS help to access the DB data and display it on webpage in JSON format 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              *** ACCESSING DB DATA WITHOUT RUNNING THE "migration" AND CREATING OWN TABLES *****
+
+Lets, create a new DB, LearnLaravel2 
+and here, you create ur own new table named "clients" and specify all the field names and other parameters and also enter some clients data init
+
+AND in .env file => 
+CHANGE => SESSION_DRIVER=database   TO SESSION_DRIVER=file 
+
+Thus, this will display the same data on webpage as before
+ 
