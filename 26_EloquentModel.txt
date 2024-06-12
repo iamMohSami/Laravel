@@ -1,0 +1,169 @@
+WHAT IS A MODEL?
+Part of mvc architecture
+This is a PHP file with class , In model, generally, we write BUSINESS LOGIC and DB CONNECTIONS
+But in Laravel we mostly do DB related work , 
+In Laravel we have an Object-relational mapper (ORM) Feature in the model 
+
+
+
+
+WHAT IS ELOQUENT MODEL and ORM?
+In Laravel Model, these models have an extra feature called as  Object-relational mapper (ORM)
+It is very easy for ORM to fetch/add/delete data from DB 
+
+
+
+MAIN USES OF ELOQUENT MODEL?
+Mostly used to access data from table in DB
+Used to fetch/update/add/delete/edit data in the DB 
+
+MAKE A NEW TABLE IN DATABASE and CHECK .env file
+Here, we made a new table named "students" and inserted data init
+
+
+MAKE A MODEL : to fetch data from DB
+php artisan make:model modelname
+
+VERY IMPORTANT**  WE HAVE 2 NOTES WHILE KEEPING THE "ModelName" => 
+1-> Model name always start with Capital Letter
+2-> Model name should always be SINGULAR wrt to the PLURAL name of the TABLE we need to fetch the data
+i.e. we need data from table "students" 
+Thus, we keep our model name as "Student" 
+BUT WHY? By doing this, by default, our TABLE gets connected with the MODEL 
+{Even if you dont follow this rule, no worry, we can still fix it and achieve same output by adding a single new line of code, but following this rule is a good industry practice}
+
+php artisan make:model Student
+
+by default code => Student.php => 
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Student extends Model
+{
+    use HasFactory;
+}
+
+
+MAKE A CONTROLLER AND VIEW 
+php artisan make:controller StudentController
+
+StudentController.php => 
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class StudentController extends Controller
+{
+    //
+    function showStudents(){
+        $data = \App\Models\Student::all() ; 
+        return $data ; 
+    }
+}
+
+
+In web.php file => 
+use App\Http\Controllers\StudentController;
+Route::get('/studentsdata' , [StudentController::class , 'showStudents']) ; 
+
+
+On Browser : http://127.0.0.1:8000/studentsdata
+Output : 
+[
+  {
+    "id": 1,
+    "Name": "Mohammad Sami",
+    "Branch": "CSE",
+    "CGPA": 8.78
+  },
+  {
+    "id": 2,
+    "Name": "Salahuddin Ayyubi",
+    "Branch": "CSE",
+    "CGPA": 10
+  },
+  {
+    "id": 3,
+    "Name": "King Baldwin ",
+    "Branch": "ECE",
+    "CGPA": 5
+  }
+]
+
+
+MAKE A NEW VIEW TO DISPLAY THE TABLE DATA => 
+php artisan make:view studentsdata
+
+In StudentController.php => 
+ function showStudentsTable(){
+        $data = \App\Models\Student::all() ; 
+        return view('studentsdata' , ['key'=>$data]) ; 
+    }
+
+In studentsdata.blade.php view => 
+<div>
+<h2>Students Data Table</h2>
+{{print_r($key)}}
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Branch</th>
+        <th>CGPA</th>
+    </tr>
+    @foreach ($key as $stud )
+        <tr>
+            <td>{{$stud->Name}}</td>
+            <td>{{$stud->Branch}}</td>
+            <td>{{$stud->CGPA}}</td>
+        </tr>
+    @endforeach
+</table>
+</div>
+
+in web.php => 
+Route::get('/studentsdatatable' , [StudentController::class , 'showStudentsTable']) ; 
+
+NOW, If our MODEL name is not a singular to a plural table name, then how do we connect that table with our model?
+
+In model file, Student.php => ADD ONE LINE -- protected $table="table_name" ;
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Student extends Model
+{
+    use HasFactory;
+    protected $table="table_name" ;
+}
+
+
+MAKING A NEW FUNCTION IN MODEL FILE AND USE IT?
+
+in model file, Student.php => 
+
+class Student extends Model
+{
+    use HasFactory;
+
+    function myfun(){
+        return "This Text comes from a function in Model file" ; 
+    }
+}
+
+in StudentController.php => 
+
+ function showStudentsTable(){
+        $var = new \App\Models\Student ; 
+        echo $var->myfun() ; 
+        $data = \App\Models\Student::all() ; 
+        return view('studentsdata' , ['key'=>$data]) ; 
+    }
