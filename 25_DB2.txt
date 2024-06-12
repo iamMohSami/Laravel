@@ -1,0 +1,50 @@
+In previous lecture, we displayed the JSON format data on our webpage
+Here, we will display it in proper Table format 
+
+
+In UserController.php => 
+
+function usertable(){
+        $list = DB::select('select * from users') ; 
+        return view('usertable' , ['xyz'=>$list]) ; 
+    }
+
+
+
+In web.php => 
+use App\Http\Controllers\UserController;
+
+//lec25 Display DB data as table
+Route::get('/usertable' , [UserController::class , 'usertable']);
+
+
+Make new view => userstable.blade.php
+In our view,
+
+<div>
+   <h3>USER TABLE</h3>
+   {{ print_r($xyz)}}
+   <table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Created At :</th>
+        <th>Updates At : </th>
+    </tr>
+    @foreach ($xyz as $user )
+        <tr>
+        <td>{{$user->id}}</td>    
+        <td>{{$user->name}}</td>    
+        <td>{{$user->email}}</td>    
+        <td>{{$user->password}}</td>    
+        <td>{{$user->created_at}}</td>    
+        <td>{{$user->updated_at}}</td>    
+        </tr>        
+    @endforeach
+   </table>
+</div>
+
+
+
