@@ -1,0 +1,53 @@
+Route Grouping with CONTROLLER => 
+
+Consider, we have 3 different routes in our web.php file =>
+
+
+Route::get('student/show' , [UserController::class , 'show'])
+Route::get('student/add' , [UserController::class , 'add'])
+Route::get('student/delete' , [UserController::class , 'delete']) 
+Route::get('student/about/{name}' , [UserController::class , 'about']) 
+
+
+NOW, WE CAN GROUP THEM BASED ON THE COMMON CONTROLLER - HOME CONTROLLER 
+
+advantages of it => 
+1. Reduces Redundant use of code by specifying the controller only once
+2. easy change in the code of controller name 
+
+
+
+HOW TO? 
+
+
+php artisan make:controller StudentController 
+
+here, 
+function show(){
+    return 'show fn implemented' ;
+}
+
+function add(){
+    return 'add fn implemented' ;
+}
+
+function delete(){
+    return 'delete fn implemented' ;
+}
+
+function about($name){
+    return $name ;
+}
+
+
+IN WEB.PHP => 
+
+use App\Http\Controllers\StudentController ; 
+
+Route::controller(StudentController::class)->group( function() {
+    Route::get('student/show' , 'show')
+    Route::get('student/add' , 'add')
+    Route::get('student/delete' , 'delete') 
+    Route::get('student/{name} , 'about')
+} )
+
