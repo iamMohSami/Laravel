@@ -1,0 +1,28 @@
+What is Route Grouping??
+
+
+
+In Laravel, we have 3 types of Route Grouping : 
+1. with Prefix
+2. with Controller
+3. with Middlewares
+
+
+                                        ROUTE GROUPING WITH PREFIX
+Consider, we have 3 different routes in our web.php file =>
+
+Route::view('student/home' , 'home')
+Route::view('student/profile' , 'profile')
+Route::view('student/show' , [UserController::class , 'show'])
+
+Now, based on their common prefix "student" , we can make a single GROUP of them which will reduce the redundant use of the word "student" in the path url and also help maintain clean code and easier changes.
+
+SYNTAX TO MAKE A GROUP => 
+
+IN web.php file => 
+
+Route::prefix('student')->group( function(){
+    Route::view('/home' , 'home')
+    Route::view('/profile' , 'profile')
+    Route::view('/show' , [UserController::class , 'show'])
+})
