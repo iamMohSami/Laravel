@@ -1,0 +1,399 @@
+We will learn about "Eloquent Model Query Builder"
+
+What is Query Builder??
+Query Buiilders are functions which make DB queries and execute it in laravel in order to fetch data from the DB according to the query written
+
+What is Eloquent Query Builder??
+When we use Query Builders with DB file --> DATABASE QUERY Builder
+When we use Query Builders with Model file  --> ELOQUENT MODEL QUERY Builder
+
+Make a new model,controller and view!
+We will be dealing with the User Table Data
+
+In UserController.php controller file ==>> 
+
+function modelquerybuilder(){
+    return "Hi"; 
+}
+
+In web.php file ==>>
+Route::get('/querybuild' , [UserController::class , 'modelquerybuilder']) ; 
+
+NOW, IN ORDER TO USE AND PERFORM OPERATIONS IN THE USER TABLE, WE NEED TO import that model in the controller file 
+i.e.
+use App\Models\User ; // need to import this model for Eloquent Model Query Builder
+and then in the function, 
+
+function modelquerybuilder(){
+    $resp = User::all() ;  //fetches all the data from the table "User"
+    // $resp = User::get() ; also does the same work 
+    return $resp ; 
+}
+
+Output on Browser ==>> 
+http://127.0.0.1:8000/querybuild
+[
+  {
+    "id": 1,
+    "name": "Mohammad Sami",
+    "email": "mohsami@test.com",
+    "email_verified_at": null,
+    "created_at": "2024-06-12T20:55:35.000000Z",
+    "updated_at": "2024-06-12T20:55:35.000000Z"
+  },
+  {
+    "id": 2,
+    "name": "Shah Rukh Khan",
+    "email": "kingkhan@test.com",
+    "email_verified_at": null,
+    "created_at": "2024-06-12T20:56:23.000000Z",
+    "updated_at": "2024-06-12T20:56:23.000000Z"
+  },
+  {
+    "id": 3,
+    "name": "Leo Messi",
+    "email": "goat@test.com",
+    "email_verified_at": null,
+    "created_at": "2024-06-12T20:57:17.000000Z",
+    "updated_at": "2024-06-12T20:57:17.000000Z"
+  }
+]
+
+LETS DISPLAY IT as a TABLE in the browser UI ------->>>>
+
+in controller file ==>> 
+
+use App\Models\User ; 
+
+function modelquerybuilder(){
+    $resp = User::all() ; 
+    return view('querybuild' , ['users'=>$resp]) ; 
+}
+
+in querybuild.blade.php ==>>
+<div>
+    <h1>User Table Data from Eloquent Model Query Builder lecture</h1>
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Password</th>
+        </tr>
+       @foreach ($users as $user )
+
+       <tr>
+        <td>{{$user->name}}</td>
+        <td>{{$user->email}}</td>
+        <td>{{$user->password}}</td>
+       </tr>
+           
+       @endforeach
+    </table>
+</div>
+
+Output on Browser -->>> IT WILL DISPLAY THE TABLE DATA IN TABULAR Format
+http://127.0.0.1:8000/querybuild
+
+User Table Data from Eloquent Model Query Builder lecture
+Name	                Email	                Password
+Mohammad Sami	        mohsami@test.com	    1234
+Shah Rukh Khan	        kingkhan@test.com	    9999
+Leo Messi	            goat@test.com	        2023
+
+
+
+NOW, WKT User::all() {or} User::get() retreives all the available data fromthe Table
+Here, we will apply some conditions using the Query Builder concept
+
+1]] *** Using WHERE query builder ***
+
+function modelquerybuilder(){
+    $resp = User::where('password' , '9999')->get() ; 
+    return view('querybuild' , ['users'=>$resp]) ; 
+}
+
+OUTPUT ==>> 
+
+Name	        Email	            Password
+Shah Rukh Khan	kingkhan@test.com	9999
+
+
+IMPORTANT NOTE ==>> 
+If 2 or more users have password as "9999" , then this ->get() retreives all the users data
+BUT, if we want only "FIRST" matching user data, we do , 
+function modelquerybuilder(){
+    $resp = User::where('password' , '9999')->first() ;
+    $resp = [$resp] ; 
+// this above line is imp and new, it helps to convert the array to display on table, without this we get ERROR
+    return view('querybuild' , ['users'=>$resp]) ; 
+}
+
+2]] *** Using FIND BY ID query builder ***
+
+function modelquerybuilder(){ 
+    $resp = User::find(1) ; 
+    $resp = [$resp] ; 
+    return view('querybuild' , ['users'=>$resp]) ; 
+}
+
+OUTPUT ==>> 
+
+Name	        Email	            Password
+Mohammad Sami	mohsami@test.com	1234
+
+
+3]] *** INSERTING NEW DATA using query builder ***
+
+function modelquerybuilder(){
+    $resp = User::insert([
+        'name' => 'Dhruv Rathee' , 
+        'email' => 'educatedyoutuber@gmail.com' , 
+        'password' => '7889'
+    ]);
+    return view('querybuild' , ['users'=>$resp]) ; 
+}
+
+4]] *** UPDATING EXISTING DATA using query builder ***
+
+function modelquerybuilder(){
+    $resp = User::where('name' , 'Dhruv Rathee')->update(['email'=>'dhruvrathee@gmail.com']) ; 
+    return view('querybuild' , ['users'=>$resp]) ; 
+}
+
+
+5]] *** DELETING EXISTING DATA using query builder ***
+
+function modelquerybuilder(){
+  $resp = User::where('name' , 'Dhruv Rathee')->delete() ; 
+    if($resp){
+        return "Data Deleted" ; 
+    }
+    return view('querybuild' , ['users'=>$resp]) ; 
+}
+
+
+
+ADDITIONAL CHATGPT NOTES ==>> 
+
+Your notes on Eloquent Model Query Builder are comprehensive and cover a variety of common use cases. Below is a refined version of your notes with additional details for deeper understanding.
+
+### Eloquent Model Query Builder in Laravel
+
+#### What is a Query Builder?
+
+Query builders in Laravel are functions that help you construct and execute database queries. They allow you to interact with the database in a more programmatic and fluent manner without writing raw SQL queries.
+
+#### What is an Eloquent Query Builder?
+
+- **Database Query Builder:** Used with the `DB` facade to build and execute queries directly on the database.
+- **Eloquent Model Query Builder:** Used with Eloquent models to build and execute queries. It leverages Laravel's Active Record implementation, providing an object-oriented approach to database interactions.
+
+### Creating a Model, Controller, and View
+
+#### Step 1: Create the Model
+
+Use the Artisan command to create a new model:
+
+```bash
+php artisan make:model User
+```
+
+#### Step 2: Create the Controller
+
+Use the Artisan command to create a new controller:
+
+```bash
+php artisan make:controller UserController
+```
+
+In `UserController.php`:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\User; // Import the User model
+
+class UserController extends Controller
+{
+    public function modelQueryBuilder()
+    {
+        $resp = User::all(); // Fetch all data from the User table
+        return view('querybuild', ['users' => $resp]);
+    }
+}
+```
+
+#### Step 3: Define the Route
+
+In `web.php`:
+
+```php
+use App\Http\Controllers\UserController;
+
+Route::get('/querybuild', [UserController::class, 'modelQueryBuilder']);
+```
+
+#### Step 4: Create the View
+
+Create `querybuild.blade.php` in the `resources/views` directory:
+
+```html
+<div>
+    <h1>User Table Data from Eloquent Model Query Builder lecture</h1>
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Password</th>
+        </tr>
+        @foreach ($users as $user)
+            <tr>
+                <td>{{ $user->name }}</td>
+                <td>{{ $user->email }}</td>
+                <td>{{ $user->password }}</td>
+            </tr>
+        @endforeach
+    </table>
+</div>
+```
+
+### Using Eloquent Model Query Builder
+
+#### Fetch All Data
+
+```php
+public function modelQueryBuilder()
+{
+    $resp = User::all(); // or User::get();
+    return view('querybuild', ['users' => $resp]);
+}
+```
+
+#### Using WHERE Query Builder
+
+```php
+public function modelQueryBuilder()
+{
+    $resp = User::where('password', '9999')->get(); 
+    return view('querybuild', ['users' => $resp]);
+}
+```
+
+#### Fetch First Matching Record
+
+```php
+public function modelQueryBuilder()
+{
+    $resp = User::where('password', '9999')->first();
+    $resp = [$resp]; // Convert to array for display
+    return view('querybuild', ['users' => $resp]);
+}
+```
+
+#### Find by ID
+
+```php
+public function modelQueryBuilder()
+{
+    $resp = User::find(1);
+    $resp = [$resp]; // Convert to array for display
+    return view('querybuild', ['users' => $resp]);
+}
+```
+
+#### Insert New Data
+
+```php
+public function modelQueryBuilder()
+{
+    User::insert([
+        'name' => 'Dhruv Rathee',
+        'email' => 'educatedyoutuber@gmail.com',
+        'password' => '7889'
+    ]);
+    $resp = User::all();
+    return view('querybuild', ['users' => $resp]);
+}
+```
+
+#### Update Existing Data
+
+```php
+public function modelQueryBuilder()
+{
+    User::where('name', 'Dhruv Rathee')->update(['email' => 'dhruvrathee@gmail.com']);
+    $resp = User::all();
+    return view('querybuild', ['users' => $resp]);
+}
+```
+
+#### Delete Existing Data
+
+```php
+public function modelQueryBuilder()
+{
+    $resp = User::where('name', 'Dhruv Rathee')->delete();
+    if ($resp) {
+        return "Data Deleted";
+    }
+    $resp = User::all();
+    return view('querybuild', ['users' => $resp]);
+}
+```
+
+### Additional Details for Deep Knowledge
+
+1. **Chaining Multiple Query Methods:**
+   - You can chain multiple query builder methods to refine your queries.
+   
+   ```php
+   $resp = User::where('status', 'active')
+                ->orderBy('name', 'asc')
+                ->take(10)
+                ->get();
+   ```
+
+2. **Aggregates and Counting:**
+   - Use query builder methods like `count()`, `sum()`, `avg()`, `min()`, and `max()` for aggregate functions.
+   
+   ```php
+   $userCount = User::count();
+   ```
+
+3. **Soft Deletes:**
+   - If your model uses soft deletes, you can use query builder methods to include or exclude trashed records.
+   
+   ```php
+   $resp = User::withTrashed()->get(); // Include soft deleted records
+   $resp = User::onlyTrashed()->get(); // Only soft deleted records
+   ```
+
+4. **Scopes:**
+   - Use Eloquent scopes to encapsulate commonly used query constraints within your model.
+   
+   ```php
+   // In User model
+   public function scopeActive($query)
+   {
+       return $query->where('status', 'active');
+   }
+   
+   // Usage
+   $resp = User::active()->get();
+   ```
+
+5. **Chunking Results:**
+   - Use chunking for processing large datasets efficiently.
+   
+   ```php
+   User::chunk(100, function ($users) {
+       foreach ($users as $user) {
+           // Process each user
+       }
+   });
+   ```
+
+By leveraging the full power of Eloquent's query builder, you can write concise, readable, and maintainable database queries in your Laravel applications.+
