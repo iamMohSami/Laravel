@@ -1,0 +1,183 @@
+WE KNOW THAT, from prev lec =>
+
+Route::view('/myform', 'routemethods');
+
+Route::get('/getroute' , [UserController::class , 'get']) ; 
+Route::post('/postroute' , [UserController::class , 'post']) ; 
+Route::put('/putroute' , [UserController::class , 'put']) ; 
+Route::patch('/patchroute' , [UserController::class , 'patch']) ; 
+Route::delete('/deleteroute' , [UserController::class , 'delete']) ; 
+
+
+
+NOW, IF WE WANT ALL  THE METHODS TO TAKE TO WEBPAGE WITH EXECUTING ONLY ONE FUNCTION NAMED "any", then how to? 
+
+in UserController.php => 
+
+  function any(){
+        return "This is any method" ; 
+    }
+
+
+
+NOW, ONE WAY IS =>
+Route::get('/getroute' , [UserController::class , 'any']) ; 
+Route::post('/postroute' , [UserController::class , 'any']) ; 
+Route::put('/putroute' , [UserController::class , 'any']) ; 
+Route::patch('/patchroute' , [UserController::class , 'any']) ; 
+Route::delete('/deleteroute' , [UserController::class , 'any']) ; 
+
+
+                        *****************  ANY METHOD ***************
+
+BUT, THIS IS NOT THE IDEAL WAY, THE IDEAL WAY IS TO USE ===>>  "any method" 
+
+In web.php => 
+Route::any('/getroute',  [UserController::class , 'any']);
+
+This will apply to all/any Routing method and execute the "any function" 
+
+
+                         *************  MATCH METHOD  ****************** 
+Now, if we want to make some set of routing method, where each set of routing methods executes different function
+
+in UserController.php => 
+
+    function group1(){
+        return "This is Group1 method" ; 
+    }
+
+    function group2(){
+        return "This is Group2 method" ; 
+    }
+
+In web.php =>
+Route::match(['get', 'post'], '/getroute', [UserController::class , 'group1']);
+Route::match(['put', 'patch' , 'delete'], '/getroute' ,  [UserController::class , 'group2']);
+
+For get and post methods, function group1 will execute
+For put, patch and delete methods, function group2 will execute
+
+
+
+ADDITIONAL CHATGPT NOTES => 
+ 
+### Advanced Routing Methods in Laravel: `any` and `match`
+
+#### `any` Method
+
+The `any` method allows a single route to respond to any HTTP request method (GET, POST, PUT, PATCH, DELETE, OPTIONS, etc.). This is useful when you want the same controller action to handle different types of requests.
+
+##### Example:
+
+**UserController.php:**
+```php
+class UserController extends Controller {
+    function any() {
+        return "This is any method";
+    }
+}
+```
+
+**Routes (web.php):**
+```php
+Route::any('/anyroute', [UserController::class, 'any']);
+```
+
+**Explanation:**
+- This route will handle any HTTP request method (GET, POST, PUT, PATCH, DELETE, OPTIONS) to the URL `/anyroute` and will execute the `any` method in `UserController`.
+
+#### `match` Method
+
+The `match` method allows you to specify an array of HTTP methods that a single route should respond to. This is useful when you want to handle a subset of methods with one action and another subset with a different action.
+
+##### Example:
+
+**UserController.php:**
+```php
+class UserController extends Controller {
+    function group1() {
+        return "This is Group1 method";
+    }
+
+    function group2() {
+        return "This is Group2 method";
+    }
+}
+```
+
+**Routes (web.php):**
+```php
+Route::match(['get', 'post'], '/group1route', [UserController::class, 'group1']);
+Route::match(['put', 'patch', 'delete'], '/group2route', [UserController::class, 'group2']);
+```
+
+**Explanation:**
+- The first route will handle GET and POST requests to the URL `/group1route` and execute the `group1` method in `UserController`.
+- The second route will handle PUT, PATCH, and DELETE requests to the URL `/group2route` and execute the `group2` method in `UserController`.
+
+### Full Example with Both Methods
+
+Combining all the examples from the previous lecture and the new `any` and `match` methods:
+
+**UserController.php:**
+```php
+class UserController extends Controller {
+    function get() {
+        return "Get Route Method";
+    }
+
+    function post() {
+        return "POST Route Method";
+    }
+
+    function put() {
+        return "PUT Route Method";
+    }
+
+    function patch() {
+        return "PATCH Route Method";
+    }
+
+    function delete() {
+        return "DELETE Route Method";
+    }
+
+    function any() {
+        return "This is any method";
+    }
+
+    function group1() {
+        return "This is Group1 method";
+    }
+
+    function group2() {
+        return "This is Group2 method";
+    }
+}
+```
+
+**Routes (web.php):**
+```php
+Route::view('/myform', 'routemethods');
+
+Route::get('/getroute', [UserController::class, 'get']);
+Route::post('/postroute', [UserController::class, 'post']);
+Route::put('/putroute', [UserController::class, 'put']);
+Route::patch('/patchroute', [UserController::class, 'patch']);
+Route::delete('/deleteroute', [UserController::class, 'delete']);
+
+Route::any('/anyroute', [UserController::class, 'any']);
+
+Route::match(['get', 'post'], '/group1route', [UserController::class, 'group1']);
+Route::match(['put', 'patch', 'delete'], '/group2route', [UserController::class, 'group2']);
+```
+
+### Summary
+
+- **`Route::any($url, $callback)`**: Responds to any HTTP method for the given URL.
+- **`Route::match($methodsArray, $url, $callback)`**: Responds to the specified array of HTTP methods for the given URL.
+- Use `any` to simplify routes that should handle multiple HTTP methods with the same action.
+- Use `match` to group specific HTTP methods to a single action for more controlled routing logic.
+
+These advanced routing methods help streamline your routing definitions and make your code more maintainable.

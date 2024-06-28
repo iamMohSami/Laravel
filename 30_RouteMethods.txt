@@ -1,0 +1,555 @@
+**]]WHAT IS A ROUTE?
+The URL defined to access a page/view/controller is known as Route. 
+ex : 
+Route::get('home' , [UserController::class , 'homefunction']) ; 
+Here, 
+"Route::" --> Class of Route
+get --> Routing Method {get/put/post/patch/delete/options}
+'home' --> URL on browser
+ [UserController::class , 'homefunction'] --> Controller to access and the function to be executed
+
+
+
+
+
+
+**]]LIST OF ALL ROUTING METHODS IN LARAVEL!
+
+Route::get($url, $callback);
+Route::post($url, $callback);
+Route::put($url, $callback);
+Route::patch($url, $callback);
+Route::delete($url, $callback);
+Route::options($url, $callback);
+
+
+1] GET Request : It is a global type of route method which GETS some data from the server to render on webpage
+ex -> Route::get('home' , [UserController::class , 'homefunction']) ; 
+
+
+2] POST Request : Route method which POSTS/STORES some data in the server
+ex -> Route::post('home' , [UserController::class , 'homefunction']) ; 
+
+3] PUT Request : Route method which helps to UPDATE alot of data  {many fields like name/email/password of a user} 
+ex -> Route::put('home' , [UserController::class , 'homefunction']) ; 
+
+4] PATCH Request : Route method which helps to UPDATE only ONE field of data
+ex -> Route::patch('home' , [UserController::class , 'homefunction']) ; 
+
+5] DELETE Request : Route method which helps to DELETE data
+ex -> Route::delete('home' , [UserController::class , 'homefunction']) ; 
+
+6] OPTIONS Request : Route method used by BROWSER during API Interaction and to check whether given URL EXISTS OR NOT . This method is never made manually by programmer, only Browser uses it 
+
+
+
+
+
+
+
+
+
+
+**************** IMPLEMENTATION OF GET METHOD ***************
+
+IN UserController.php => 
+
+class UserController extends Controller {
+    function get(){
+        return "Get Route Method" ;
+    }
+}
+
+IN web.php => 
+Route::get('getroute' , [UserController::class , 'get']) ; 
+
+On BROWSER =>  http://127.0.0.1:8000/getroute
+OUTPUT : Get Route Method
+
+
+**************** IMPLEMENTATION OF GET METHOD USING Route::view and FORM ATTRIBUTE ***************
+
+IN routemethods.blade.php => 
+<div>
+    <h1>USER FORM</h1>
+    <form action="/getroute" method="get">     //THE ACTION HAPPENS WHEN SUBMIT BTN IS CLICKED AND METHOD IS V.IMP
+    <input type="text" name="name" placeholder="Enter Name"> 
+    <br> <br>
+    <input type="password" name="password" placeholder="Password"> 
+    <br> <br>
+    <button>Submit</button>
+    
+    </form>
+</div>
+
+IN web.php => 
+Route::view('/myform', 'routemethods');
+
+On BROWSER =>  http://127.0.0.1:8000/myform
+OUTPUT : 
+USER FORM
+Mohammad Sami
+•••
+Submit
+
+AFTER CLICKING SUBMIT BUTTON :  http://127.0.0.1:8000/getroute?name=Mohammad+Sami&password=134
+Get Route Method
+
+NOTE : 
+*}The disadvantage of this method is that the data entered in form is visible in the browser URL
+*}the get method implementation is straight forward and simple but other methods REQUIRE A FORM/INPUT FIELDS TO FUNCTION 
+
+
+
+**************** IMPLEMENTATION OF POST METHOD and FORM ATTRIBUTE ***************
+IN UserController.php  => 
+function post(){
+        return "POST Route Method" ;
+    }
+
+IN routemethods.blade.php => 
+<div>
+    <h1>USER FORM</h1>
+    <form action="/postroute" method="post">  
+    @csrf  
+    <input type="text" name="name" placeholder="Enter Name"> 
+    <br> <br>
+    <input type="password" name="password" placeholder="Password"> 
+    <br> <br>
+    <button>Submit</button>
+    </form>
+</div>
+
+IN web.php => 
+Route::view('/myform', 'routemethods');
+Route::post('/postroute' , [UserController::class , 'post']) ; 
+
+On BROWSER =>  http://127.0.0.1:8000/myform
+OUTPUT : 
+USER FORM
+Mohammad Sami
+•••
+Submit
+
+AFTER CLICKING SUBMIT BUTTON :   http://127.0.0.1:8000/postroute  {Note that, here the details are not shown in URL}
+POST Route Method
+
+
+
+                /** EXCEPTIONS FROM NOW: NEED TO ADD NEW/DIFFERENT LINE OF CODE **/
+
+**************** IMPLEMENTATION OF PUT METHOD and FORM ATTRIBUTE ***************
+IN UserController.php  => 
+function put(){
+        return "PUT Route Method" ;
+    }
+
+IN routemethods.blade.php => 
+<div>
+    <h1>USER FORM</h1>
+    <form action="/putroute" method="put">  
+    @csrf  
+    <input type="text" name="name" placeholder="Enter Name"> 
+    <br> <br>
+    <input type="password" name="password" placeholder="Password"> 
+    <br> <br>
+    <button>Submit</button>
+    </form>
+</div>
+
+IN web.php => 
+Route::view('/myform', 'routemethods');
+Route::put('/putroute' , [UserController::class , 'put']) ; 
+
+"""" THIS WILL NOT WORK FOR "PUT" , AFTER SUBMITTING THE FORM, IT WILL INSTEAD TAKE YOU TO GET METHOD's IMPLEMENTATION """
+
+for PUT , we need to ADD this in the form :     <input type="hidden" name="_method" value="PUT">
+THUS, CORRECT IMPLEMENTATION => 
+
+IN UserController.php  => 
+function put(){
+        return "PUT Route Method" ;
+    }
+
+IN routemethods.blade.php => 
+<div>
+    <h1>USER FORM</h1>
+    <form action="/putroute" method="post">           //THE METHOD HERE SHOULD BE "POST" always
+    @csrf  
+    <input type="hidden" name="_method" value="PUT">    //THE NAME IS CONSTANT FOR ALL, JUST CHANGE VALUE
+    <input type="text" name="name" placeholder="Enter Name"> 
+    <br> <br>
+    <input type="password" name="password" placeholder="Password"> 
+    <br> <br>
+    <button>Submit</button>
+    </form>
+</div>
+
+IN web.php => 
+Route::view('/myform', 'routemethods');
+Route::put('/putroute' , [UserController::class , 'put']) ; 
+
+On BROWSER =>  http://127.0.0.1:8000/myform
+OUTPUT : 
+USER FORM
+Mohammad Sami
+•••
+Submit
+
+AFTER CLICKING SUBMIT BUTTON :   http://127.0.0.1:8000/putroute  
+PUT Route Method
+
+
+
+**************** IMPLEMENTATION OF PATCH METHOD and FORM ATTRIBUTE ***************
+
+
+IN UserController.php  => 
+function patch(){
+        return "PATCH Route Method" ;
+    }
+
+IN routemethods.blade.php => 
+<div>
+    <h1>USER FORM</h1>
+    <form action="/patchroute" method="post">           //THE METHOD HERE SHOULD BE "POST" always
+    @csrf  
+    <input type="hidden" name="_method" value="PATCH">    //THE NAME IS CONSTANT FOR ALL, JUST CHANGE VALUE
+    <input type="text" name="name" placeholder="Enter Name"> 
+    <br> <br>
+    <input type="password" name="password" placeholder="Password"> 
+    <br> <br>
+    <button>Submit</button>
+    </form>
+</div>
+
+IN web.php => 
+Route::view('/myform', 'routemethods');
+Route::patch('/patchroute' , [UserController::class , 'patch']) ; 
+
+On BROWSER =>  http://127.0.0.1:8000/myform
+OUTPUT : 
+USER FORM
+Mohammad Sami
+•••
+Submit
+
+AFTER CLICKING SUBMIT BUTTON :   http://127.0.0.1:8000/patchroute  
+PATCH Route Method
+
+
+**************** IMPLEMENTATION OF DELETE METHOD and FORM ATTRIBUTE ***************
+
+
+IN UserController.php  => 
+function delete(){
+        return "DELETE Route Method" ;
+    }
+
+IN routemethods.blade.php => 
+<div>
+    <h1>USER FORM</h1>
+    <form action="/deletroute" method="post">           //THE METHOD HERE SHOULD BE "POST" always
+    @csrf  
+    <input type="hidden" name="_method" value="DELETE">    //THE NAME IS CONSTANT FOR ALL, JUST CHANGE VALUE
+    <input type="text" name="name" placeholder="Enter Name"> 
+    <br> <br>
+    <input type="password" name="password" placeholder="Password"> 
+    <br> <br>
+    <button>Submit</button>
+    </form>
+</div>
+
+IN web.php => 
+Route::view('/myform', 'routemethods');
+Route::delete('/deleteroute' , [UserController::class , 'delete']) ; 
+
+On BROWSER =>  http://127.0.0.1:8000/myform
+OUTPUT : 
+USER FORM
+Mohammad Sami
+•••
+Submit
+
+AFTER CLICKING SUBMIT BUTTON :   http://127.0.0.1:8000/deleteroute  
+DELETE Route Method
+
+
+
+
+ADDITIONAL CHATGPT NOTES => 
+
+### Routing Methods in Laravel
+
+#### What is a Route?
+
+A route is the URL defined to access a page, view, or controller action. It maps a URL pattern to a specific controller and action.
+
+Example:
+```php
+Route::get('home', [UserController::class, 'homefunction']);
+```
+- `Route::`: Refers to the Route class.
+- `get`: HTTP method (other methods include put, post, patch, delete, options).
+- `'home'`: URL in the browser.
+- `[UserController::class, 'homefunction']`: Controller and action to be executed.
+
+### List of All Routing Methods in Laravel
+
+```php
+Route::get($url, $callback);
+Route::post($url, $callback);
+Route::put($url, $callback);
+Route::patch($url, $callback);
+Route::delete($url, $callback);
+Route::options($url, $callback);
+```
+
+1. **GET Request**: Fetches data from the server to render on a webpage.
+   ```php
+   Route::get('home', [UserController::class, 'homefunction']);
+   ```
+
+2. **POST Request**: Submits data to the server.
+   ```php
+   Route::post('home', [UserController::class, 'homefunction']);
+   ```
+
+3. **PUT Request**: Updates multiple fields of an existing resource.
+   ```php
+   Route::put('home', [UserController::class, 'homefunction']);
+   ```
+
+4. **PATCH Request**: Updates a single field of an existing resource.
+   ```php
+   Route::patch('home', [UserController::class, 'homefunction']);
+   ```
+
+5. **DELETE Request**: Deletes a resource.
+   ```php
+   Route::delete('home', [UserController::class, 'homefunction']);
+   ```
+
+6. **OPTIONS Request**: Used by the browser during API interaction to check if the URL exists. This method is typically not manually implemented by developers.
+
+### Implementation Examples
+
+#### GET Method
+
+**Controller (UserController.php):**
+```php
+class UserController extends Controller {
+    function get() {
+        return "Get Route Method";
+    }
+}
+```
+
+**Routes (web.php):**
+```php
+Route::get('getroute', [UserController::class, 'get']);
+```
+
+**Browser:** http://127.0.0.1:8000/getroute  
+**Output:** Get Route Method
+
+#### GET Method Using Route::view and Form
+
+**View (routemethods.blade.php):**
+```html
+<div>
+    <h1>USER FORM</h1>
+    <form action="/getroute" method="get">
+        <input type="text" name="name" placeholder="Enter Name">
+        <br><br>
+        <input type="password" name="password" placeholder="Password">
+        <br><br>
+        <button>Submit</button>
+    </form>
+</div>
+```
+
+**Routes (web.php):**
+```php
+Route::view('/myform', 'routemethods');
+```
+
+**Browser:** http://127.0.0.1:8000/myform  
+**Output:** Form with name and password fields.
+
+After clicking submit: http://127.0.0.1:8000/getroute?name=Mohammad+Sami&password=1234  
+**Output:** Get Route Method
+
+**Note:** Data entered in the form is visible in the URL.
+
+#### POST Method
+
+**Controller (UserController.php):**
+```php
+class UserController extends Controller {
+    function post() {
+        return "POST Route Method";
+    }
+}
+```
+
+**View (routemethods.blade.php):**
+```html
+<div>
+    <h1>USER FORM</h1>
+    <form action="/postroute" method="post">
+        @csrf
+        <input type="text" name="name" placeholder="Enter Name">
+        <br><br>
+        <input type="password" name="password" placeholder="Password">
+        <br><br>
+        <button>Submit</button>
+    </form>
+</div>
+```
+
+**Routes (web.php):**
+```php
+Route::view('/myform', 'routemethods');
+Route::post('/postroute', [UserController::class, 'post']);
+```
+
+**Browser:** http://127.0.0.1:8000/myform  
+**Output:** Form with name and password fields.
+
+After clicking submit: http://127.0.0.1:8000/postroute  
+**Output:** POST Route Method
+
+#### PUT Method
+
+**Controller (UserController.php):**
+```php
+class UserController extends Controller {
+    function put() {
+        return "PUT Route Method";
+    }
+}
+```
+
+**View (routemethods.blade.php):**
+```html
+<div>
+    <h1>USER FORM</h1>
+    <form action="/putroute" method="post">  <!-- Note: method="post" -->
+        @csrf
+        <input type="hidden" name="_method" value="PUT">  <!-- Hidden field for PUT method -->
+        <input type="text" name="name" placeholder="Enter Name">
+        <br><br>
+        <input type="password" name="password" placeholder="Password">
+        <br><br>
+        <button>Submit</button>
+    </form>
+</div>
+```
+
+**Routes (web.php):**
+```php
+Route::view('/myform', 'routemethods');
+Route::put('/putroute', [UserController::class, 'put']);
+```
+
+**Browser:** http://127.0.0.1:8000/myform  
+**Output:** Form with name and password fields.
+
+After clicking submit: http://127.0.0.1:8000/putroute  
+**Output:** PUT Route Method
+
+#### PATCH Method
+
+**Controller (UserController.php):**
+```php
+class UserController extends Controller {
+    function patch() {
+        return "PATCH Route Method";
+    }
+}
+```
+
+**View (routemethods.blade.php):**
+```html
+<div>
+    <h1>USER FORM</h1>
+    <form action="/patchroute" method="post">  <!-- Note: method="post" -->
+        @csrf
+        <input type="hidden" name="_method" value="PATCH">  <!-- Hidden field for PATCH method -->
+        <input type="text" name="name" placeholder="Enter Name">
+        <br><br>
+        <input type="password" name="password" placeholder="Password">
+        <br><br>
+        <button>Submit</button>
+    </form>
+</div>
+```
+
+**Routes (web.php):**
+```php
+Route::view('/myform', 'routemethods');
+Route::patch('/patchroute', [UserController::class, 'patch']);
+```
+
+**Browser:** http://127.0.0.1:8000/myform  
+**Output:** Form with name and password fields.
+
+After clicking submit: http://127.0.0.1:8000/patchroute  
+**Output:** PATCH Route Method
+
+#### DELETE Method
+
+**Controller (UserController.php):**
+```php
+class UserController extends Controller {
+    function delete() {
+        return "DELETE Route Method";
+    }
+}
+```
+
+**View (routemethods.blade.php):**
+```html
+<div>
+    <h1>USER FORM</h1>
+    <form action="/deleteroute" method="post">  <!-- Note: method="post" -->
+        @csrf
+        <input type="hidden" name="_method" value="DELETE">  <!-- Hidden field for DELETE method -->
+        <input type="text" name="name" placeholder="Enter Name">
+        <br><br>
+        <input type="password" name="password" placeholder="Password">
+        <br><br>
+        <button>Submit</button>
+    </form>
+</div>
+```
+
+**Routes (web.php):**
+```php
+Route::view('/myform', 'routemethods');
+Route::delete('/deleteroute', [UserController::class, 'delete']);
+```
+
+**Browser:** http://127.0.0.1:8000/myform  
+**Output:** Form with name and password fields.
+
+After clicking submit: http://127.0.0.1:8000/deleteroute  
+**Output:** DELETE Route Method
+
+### Summary
+
+- **GET**: Fetch data.
+- **POST**: Submit data.
+- **PUT**: Update multiple fields.
+- **PATCH**: Update a single field.
+- **DELETE**: Delete data.
+- **OPTIONS**: Check if URL exists (used by the browser).
+
+### Additional Notes
+
+- For PUT, PATCH, and DELETE methods, use a hidden `_method` input field with a form that has `method="post"`.
+- Always include `@csrf` for form submissions to protect against CSRF attacks.
+- `Route::view()` is a simple way to route to a view without needing a controller.
+
+These notes should provide a comprehensive understanding of routing methods in Laravel, along with practical implementation examples.
