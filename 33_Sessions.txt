@@ -1,0 +1,280 @@
+Laravel Session
+ 
+Things to cover =>
+What is session?
+Make login form, route, and controller.
+Store data in the session.
+Get data from the session
+Remove data from the session 
+Interview Questions
+
+*** WHAT IS SESSION ** 
+A session is a way to store and access data across multiple pages of a website for a single user.
+Session store data in the server side. But manage with browser cookies
+Session is not unique only in Laravel, it is widely used in all progm languages and function the same way
+Session helps to store some amount of data/credentials and use it in all pages at a particular session AND particular system only
+to store more/lot of amount of data = USE DATABASE
+
+
+**** Make login form, route, and controller ** 
+
+In web.php => 
+//lec32 Sessions 
+Route::view('/sessionform', 'sessionform');
+Route::view('/sessionprofile', 'sessionprofile');
+Route::post('/sessionformsubmit' , [UserController::class , 'session']) ;
+
+In sessionform.blade.php view =>
+<div>
+    <h1>SESSION LOGIN FORM</h1>
+    <form action="/sessionformsubmit" method="post">
+        @csrf
+        <input type="text" name="fname" placeholder="Enter First Name">
+        <br> <br> 
+        <input type="password" name="password" placeholder="Create a Password">
+        <br> <br>
+        <button>Submit</button>
+    </form>
+</div>
+
+In sessionprofile.blade.php view =>
+<div>
+    <h1>PROFILE PAGE FOR SESSION LECTURE</h1>
+</div>
+
+
+In UserController.php => 
+ //lec32 Session
+    function session(Request $req){
+        return "Hi" ; 
+    }
+
+NOW, HERE WE WILL TRY TO STORE USER NAME AS A "SESSION" AND THEN USE IT IN "PROFILE" page also!!
+
+TO STORE DATA IN SESSION : syntax :->  $req->session()->put('NameOfSession' , DataYouWantToStoreInSession ) ;
+
+ function session(Request $req){
+        $req->session()->put('username' , $req->input('name')) ; 
+        return redirect('sessionprofile') ; 
+    }
+
+TO EXTRACT THE DATA FROM STORED SESSION : syntax :-> session('username')
+
+In sessionprofile.blade.php view  =>
+<div>
+    <h1>PROFILE PAGE FOR SESSION LECTURE</h1>
+    {{-- To extract session data  --}}  {{-- USE => session('username')  --}}
+    @if (session('username'))
+        <h3>Welcome {{session('username')}}!</h3>
+    @else 
+        <h3>No User Found | Maybe Session Ended</h3>
+    @endif
+</div>
+
+ON BROWSER => http://127.0.0.1:8000/sessionform
+
+SESSION LOGIN FORM
+Enter First Name
+Mohammad Sami
+
+Create a Password
+****
+
+Submit
+
+AFTER SUBMITTING => http://127.0.0.1:8000/sessionprofile
+
+PROFILE PAGE FOR SESSION LECTURE
+Welcome Mohammad Sami!
+
+
+NOW, LETS SEE HOW TO END THE SESSION! 
+
+Lets make a LOGOUT anchor link, which when clicked, the SESSION should end 
+Also a LOGIN anchor link, to take back to main form after SESSION ends
+
+In sessionprofile.blade.php view  =>
+<div>
+    <h1>PROFILE PAGE FOR SESSION LECTURE</h1>
+    {{-- To extract session data  --}}  {{-- USE => session('username')  --}}
+    @if (session('username'))
+        <h3>Welcome {{session('username')}}!</h3>
+        <h3>    <a href="sessionlogout">LogOut (end session)</a>        </h3>
+    @else 
+        <h3>No User Found | Maybe Session Ended</h3>
+        <h3><a href="sessionform">LogIn Form</a></h3>
+    @endif
+</div>
+
+In UserController.php => 
+
+    function session(Request $req){
+        $req->session()->put('username' , $req->input('name')) ; 
+        return redirect('sessionprofile') ; 
+    }
+    function logout(){
+        session()->pull('username') ; 
+        return redirect('sessionprofile') ; 
+    }
+
+In web.php => 
+//lec32 Sessions 
+Route::view('/sessionform', 'sessionform');
+Route::view('/sessionprofile', 'sessionprofile');
+Route::post('/sessionformsubmit' , [UserController::class , 'session']) ;
+Route::get('/sessionlogout' , [UserController::class , 'logout']) ; 
+
+ON BROWSER => http://127.0.0.1:8000/sessionform
+SESSION LOGIN FORM
+Mohammad Sami
+
+•••••
+
+Submit
+
+AFTER SUBMITTING => http://127.0.0.1:8000/sessionprofile
+
+PROFILE PAGE FOR SESSION LECTURE
+Welcome Mohammad Sami!
+LogOut (end session)    {this is anchor link} 
+
+AFTER CLICKING THE ANCHOR LINK OF "LogOut" =>  http://127.0.0.1:8000/sessionprofile
+
+PROFILE PAGE FOR SESSION LECTURE
+No User Found | Maybe Session Ended
+LogIn Form
+
+AFTER CLICKING THE ANCHOR LINK OF "LogIn Form" => http://127.0.0.1:8000/sessionform 
+Original Login Form 
+
+
+NOTE : multiple sessions can be created at a time and data can be stored, BUT, too many sessions and too much data 
+init will slow down the application performance!
+
+
+
+
+
+
+
+
+
+
+
+ADDITIONAL CHATGPT NOTES => 
+
+### Laravel Session
+
+#### What is a Session?
+
+A session in Laravel is a way to store and access data across multiple pages of a website for a single user. Sessions store data on the server side but are managed using browser cookies. This concept is not unique to Laravel and is used across various programming languages to manage stateful interactions. Sessions help store small amounts of data/credentials, which can be accessed throughout the user's session on a particular system. For storing larger amounts of data, it is advisable to use a database.
+
+#### Creating a Login Form, Route, and Controller
+
+**web.php:**
+```php
+// lec32 Sessions 
+Route::view('/sessionform', 'sessionform');
+Route::view('/sessionprofile', 'sessionprofile');
+Route::post('/sessionformsubmit', [UserController::class, 'session']);
+Route::get('/sessionlogout', [UserController::class, 'logout']);
+```
+
+**sessionform.blade.php:**
+```html
+<div>
+    <h1>SESSION LOGIN FORM</h1>
+    <form action="/sessionformsubmit" method="post">
+        @csrf
+        <input type="text" name="fname" placeholder="Enter First Name">
+        <br><br>
+        <input type="password" name="password" placeholder="Create a Password">
+        <br><br>
+        <button>Submit</button>
+    </form>
+</div>
+```
+
+**sessionprofile.blade.php:**
+```html
+<div>
+    <h1>PROFILE PAGE FOR SESSION LECTURE</h1>
+    @if (session('username'))
+        <h3>Welcome {{session('username')}}!</h3>
+        <h3><a href="sessionlogout">LogOut (end session)</a></h3>
+    @else 
+        <h3>No User Found | Maybe Session Ended</h3>
+        <h3><a href="sessionform">LogIn Form</a></h3>
+    @endif
+</div>
+```
+
+**UserController.php:**
+```php
+use Illuminate\Http\Request;
+
+class UserController extends Controller {
+    // lec32 Session
+    function session(Request $req){
+        $req->session()->put('username', $req->input('fname')); 
+        return redirect('sessionprofile');
+    }
+
+    function logout(){
+        session()->pull('username'); 
+        return redirect('sessionprofile');
+    }
+}
+```
+
+### Explanation
+
+1. **Creating Routes and Views:**
+    - The `Route::view('/sessionform', 'sessionform');` line sets up a route to display the login form view.
+    - The `Route::view('/sessionprofile', 'sessionprofile');` line sets up a route to display the profile view.
+    - The `Route::post('/sessionformsubmit', [UserController::class, 'session']);` line sets up a POST route to handle form submission and store session data.
+    - The `Route::get('/sessionlogout', [UserController::class, 'logout']);` line sets up a GET route to handle session logout.
+
+2. **Form and Profile Blade Templates:**
+    - The form in `sessionform.blade.php` sends a POST request to `/sessionformsubmit` when the submit button is clicked.
+    - In `sessionprofile.blade.php`, the session data is accessed and displayed if available. Otherwise, a message indicating no user is found is displayed along with a link to the login form.
+
+3. **Controller Logic:**
+    - The `session` method in the controller stores the user's first name in the session and redirects to the profile page.
+    - The `logout` method removes the session data and redirects to the profile page.
+
+### Additional Details
+
+1. **Storing Data in Session:**
+    - Syntax: `$req->session()->put('key', 'value');`
+
+2. **Retrieving Data from Session:**
+    - Syntax: `session('key');`
+
+3. **Removing Data from Session:**
+    - Syntax: `session()->pull('key');`
+
+4. **Checking Session Data:**
+    - Syntax: `session()->has('key');`
+
+5. **Flash Data:**
+    - Flash data is used for temporary data storage, typically used for status messages.
+    - Syntax: `$req->session()->flash('status', 'Task was successful!');`
+
+6. **Configuration:**
+    - Laravel sessions can be configured in `config/session.php`.
+    - Various drivers can be used for session storage: `file`, `cookie`, `database`, `apc`, `memcached`, `redis`, `array`.
+
+7. **Security:**
+    - Sessions are secured using cookies with proper encryption and HTTP-only flags to prevent XSS attacks.
+    - Ensure CSRF protection is enabled for all forms to prevent CSRF attacks.
+
+### Summary
+
+- **Session:** A method to store and retrieve data across multiple pages for a single user.
+- **Login Form:** Created with routes and blade templates to handle user input.
+- **Session Storage:** Use `$req->session()->put()` to store data and `session('key')` to retrieve it.
+- **Session Management:** Use `session()->pull()` to remove data and handle multiple sessions with care to maintain performance.
+- **Security:** Utilize Laravel's built-in security features to protect session data.
+
+Understanding sessions in Laravel is crucial for building stateful applications where user-specific data needs to be persisted across different pages or requests.
