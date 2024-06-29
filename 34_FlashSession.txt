@@ -1,0 +1,357 @@
+Here, we will learn about : FLASH SESSION
+1) $req->session()->flash('FlashSessionName' , 'FlashSessionMessage') ; 
+2) session()->reflash()    TO KEEP THE FLASH SESSION
+3) session()->keep(['list of sessions to keep'])
+
+
+WHAT IS A FLASH SESSION AND HOW IS IT DIFFERENT FROM NORMAL SESSION?? 
+A Flash Session is a way to store data in it ONLY ONCE 
+After REFRESH or ANY ROUTE METHOD, the data will be removed from the flash session 
+Mostly used to display SUCCESS or ERROR messages
+
+In Normal Session, the data is kept until and unless the SESSION ENDS whereas in Flash Session is data is removed after page refresh 
+
+
+*** IMPLEMENTING A FLASH SESSION ==>>
+
+In web.php => 
+//lec33 Flash Session 
+Route::view('/flashsession', 'flashsession');
+Route::post('/flashsessionformsubmit' ,  [UserController::class , 'flashsession'] ) ; 
+
+In UserController.php => 
+function flashsession(Request $req){
+    //your DataBase Code
+    $req->session()->flash('SuccessMsg' , "User Added Successfully!") ; 
+    return redirect('flashsession') ; //returning back to same page after user entered
+}
+
+In flashsession.blade.php VIEW file => 
+<div>
+    <h1>Flash Session</h1>
+    @if (session('SuccessMsg'))
+    <span class="success-msg">     {{session('SuccessMsg')}}    </span>
+    @endif
+    <form action="/flashsessionformsubmit" method="post">
+        @csrf
+        <input type="text" name="name" placeholder="Enter First Name">
+        <br> <br> 
+        <input type="text" name="email" placeholder="Enter Email">
+        <br> <br>
+        <input type="number" name="phone" placeholder="Enter Phone number">
+        <br> <br>
+        <button>Submit</button>
+    </form>
+</div>
+
+<style>
+    .success-msg{
+        background-color: lightgreen;
+        border: 2px solid black ; 
+        padding: 2px 20px ; 
+        margin-bottom: 15px ; 
+        display: inline-block ; 
+    }
+</style>
+
+THUS, ON BROWSER => http://127.0.0.1:8000/flashsession
+Flash Session
+Mohammad Sami
+
+choudharisami2004@gmail.com
+
+7338363439
+
+Submit
+
+AFTER CLICKING SUBMIT BUTTON : 
+
+Flash Session
+User Added Successfully!               "this is the success msg obtained as a  Flash Session"
+Enter First Name
+
+Enter Email
+
+Enter Phone number
+
+Submit
+
+
+***** now, IF WE WANT TO KEEP THE FLASH SESSION, i.e. THE DATA SHOULD NOT BE REMOVED AFTER REFRESH or ROUTE CHANGE 
+WE can use => REFLASH!!
+
+Syntax : just include this line of code = session()->reflash() 
+
+EXAMPLE :- 
+
+<div>
+    <span> <h1>Flash Session</h1></span>
+
+    <div>
+        @if (session('SuccessMsg'))
+        <span class="success-msg">     {{session('SuccessMsg')}}    </span>
+        @endif
+    </div>
+
+    {{session()->reflash()}}
+    
+    <form action="/flashsessionformsubmit" method="post">
+        @csrf
+        <input type="text" name="name" placeholder="Enter First Name">
+        <br> <br> 
+        <input type="text" name="email" placeholder="Enter Email">
+        <br> <br>
+        <input type="number" name="phone" placeholder="Enter Phone number">
+        <br> <br>
+        <button>Submit</button>
+    </form>
+</div>
+
+NOW, WHEN WE SUBMIT THE FORM, THE SUCCESS MSG APPEARS AND EVEN AFTER REFRESH or ROUTE CHANGE, IT DOESNT GO {just like a normal session!}
+
+
+
+***** now, LETS LEARN ABOUT   session()->keep(['list of sessions to keep'])
+IT is used when we have 2 or more flash sessions, and we want to keep/reflash only some of them and let the others vanish after refresh
+
+TASK : create 2 flashsessions, SuccessMsg and username, let the SuccessMsg be normal flashsession which disappers BUT the username flashsession should be constant 
+
+<div>
+    <span> <h1>Flash Session</h1></span>
+    <span>
+            @if(session('username'))
+            <span class="name">
+            {{session('username')}}
+        </span>
+            @endif
+    </span>
+    <div>
+        @if (session('SuccessMsg'))
+        <span class="success-msg">     {{session('SuccessMsg')}}    </span>
+        @endif
+    </div>
+
+    {{session()->keep(['username'])}}
+    
+    <form action="/flashsessionformsubmit" method="post">
+        @csrf
+        <input type="text" name="name" placeholder="Enter First Name">
+        <br> <br> 
+        <input type="text" name="email" placeholder="Enter Email">
+        <br> <br>
+        <input type="number" name="phone" placeholder="Enter Phone number">
+        <br> <br>
+        <button>Submit</button>
+    </form>
+</div>
+
+
+<style>
+    .success-msg{
+        background-color: lightgreen;
+        border: 2px solid black ; 
+        padding: 2px 20px ; 
+        margin-bottom: 15px ; 
+        display: inline-block ; 
+    }
+
+    .name{
+        background-color: yellow;
+        border : 2px dotted black ; 
+        color : red ; 
+        padding: 2px 20px ; 
+        margin-bottom: 15px ; 
+        display: inline-block ; 
+        }
+</style>
+
+
+NOTE : here, $session->reflash('username') will not work, reflash is only used to MAKE ALL THE implemented FLASH SESSIONS AS CONSTANT 
+Thus, only use     {{session()->keep(['username'])}} and include names of flash session to keep alive in the array 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ADDITIONAL CHATGPT NOTES => 
+
+
+### Laravel Flash Session
+
+#### What is a Flash Session?
+
+A Flash Session is a way to store data temporarily, which is intended to be available for the next request only. After the request, the data will be removed from the flash session. This is particularly useful for displaying success or error messages to users after form submissions or other actions.
+
+**Difference from Normal Session:**
+- **Normal Session:** Data persists until the session ends or is explicitly removed.
+- **Flash Session:** Data is automatically removed after the next request.
+
+#### Implementing a Flash Session
+
+**web.php:**
+```php
+// lec33 Flash Session 
+Route::view('/flashsession', 'flashsession');
+Route::post('/flashsessionformsubmit', [UserController::class, 'flashsession']);
+```
+
+**UserController.php:**
+```php
+use Illuminate\Http\Request;
+
+class UserController extends Controller {
+    function flashsession(Request $req){
+        // Your DataBase Code
+        $req->session()->flash('SuccessMsg', "User Added Successfully!");
+        return redirect('flashsession'); // Returning back to the same page after user entered
+    }
+}
+```
+
+**flashsession.blade.php:**
+```html
+<div>
+    <h1>Flash Session</h1>
+    @if (session('SuccessMsg'))
+        <span class="success-msg">{{ session('SuccessMsg') }}</span>
+    @endif
+    <form action="/flashsessionformsubmit" method="post">
+        @csrf
+        <input type="text" name="name" placeholder="Enter First Name">
+        <br><br>
+        <input type="text" name="email" placeholder="Enter Email">
+        <br><br>
+        <input type="number" name="phone" placeholder="Enter Phone number">
+        <br><br>
+        <button>Submit</button>
+    </form>
+</div>
+
+<style>
+    .success-msg {
+        background-color: lightgreen;
+        border: 2px solid black;
+        padding: 2px 20px;
+        margin-bottom: 15px;
+        display: inline-block;
+    }
+</style>
+```
+
+**Explanation:**
+1. **Routes and Views:**
+    - `Route::view('/flashsession', 'flashsession');` sets up a route to display the flash session form view.
+    - `Route::post('/flashsessionformsubmit', [UserController::class, 'flashsession']);` sets up a POST route to handle form submission and store flash session data.
+
+2. **Controller Logic:**
+    - The `flashsession` method in the controller stores a success message in the flash session and redirects back to the same page.
+
+3. **Blade Template:**
+    - The `flashsession.blade.php` view checks if there is a `SuccessMsg` in the session and displays it if available.
+
+#### Keeping Flash Session Data
+
+**Reflash:**
+To keep all flash session data for the next request, use `session()->reflash()`.
+
+**Example:**
+```html
+<div>
+    <h1>Flash Session</h1>
+    <div>
+        @if (session('SuccessMsg'))
+            <span class="success-msg">{{ session('SuccessMsg') }}</span>
+        @endif
+    </div>
+    {{ session()->reflash() }}
+    <form action="/flashsessionformsubmit" method="post">
+        @csrf
+        <input type="text" name="name" placeholder="Enter First Name">
+        <br><br>
+        <input type="text" name="email" placeholder="Enter Email">
+        <br><br>
+        <input type="number" name="phone" placeholder="Enter Phone number">
+        <br><br>
+        <button>Submit</button>
+    </form>
+</div>
+```
+
+**Keeping Specific Flash Sessions:**
+To keep specific flash sessions for the next request, use `session()->keep(['list of sessions to keep'])`.
+
+**Example:**
+```html
+<div>
+    <h1>Flash Session</h1>
+    @if (session('username'))
+        <span class="name">{{ session('username') }}</span>
+    @endif
+    @if (session('SuccessMsg'))
+        <span class="success-msg">{{ session('SuccessMsg') }}</span>
+    @endif
+    {{ session()->keep(['username']) }}
+    <form action="/flashsessionformsubmit" method="post">
+        @csrf
+        <input type="text" name="name" placeholder="Enter First Name">
+        <br><br>
+        <input type="text" name="email" placeholder="Enter Email">
+        <br><br>
+        <input type="number" name="phone" placeholder="Enter Phone number">
+        <br><br>
+        <button>Submit</button>
+    </form>
+</div>
+
+<style>
+    .success-msg {
+        background-color: lightgreen;
+        border: 2px solid black;
+        padding: 2px 20px;
+        margin-bottom: 15px;
+        display: inline-block;
+    }
+
+    .name {
+        background-color: yellow;
+        border: 2px dotted black;
+        color: red;
+        padding: 2px 20px;
+        margin-bottom: 15px;
+        display: inline-block;
+    }
+</style>
+```
+
+**Explanation:**
+1. **Reflash:**
+    - `session()->reflash()` keeps all flash session data available for the next request, effectively making it behave like a normal session for one more request.
+
+2. **Keep Specific Sessions:**
+    - `session()->keep(['username'])` keeps only the specified flash session data (`username` in this case) for the next request.
+
+### Summary
+
+- **Flash Session:** Temporarily stores data intended to be available for the next request only.
+- **Reflash:** Keeps all flash session data for an additional request.
+- **Keep Specific Sessions:** Allows you to specify which flash session data to keep for the next request.
+- **Use Case:** Ideal for displaying success or error messages to users after form submissions or other actions.
+
+Understanding and utilizing flash sessions in Laravel enables better user feedback mechanisms and enhances the overall user experience by providing timely and appropriate messages without persisting data longer than necessary.
