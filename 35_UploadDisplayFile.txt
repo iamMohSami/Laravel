@@ -1,0 +1,322 @@
+HERE, WE WILL LEARN ABOUT => Upload and Display file
+ 
+1)Make Small form to select file
+2)Make a Controller for uploading file
+3)Store file with auto generated name
+4)Store File with the provided name  
+5)Make upload file public
+6)Display file after upload.
+
+
+*******  MAKE FORM TO SELECT FILE 
+
+In uplaod.blade.php => 
+<div>
+    <h1>FORM TO UPLOAD FILE</h1>
+    <form action="uploadsubmit" method="post" enctype="multipart/form-data">
+        @csrf
+        <input type="file" name="upload" id="upload">
+        <button>Upload File</button>
+    </form>
+</div>
+NOTE : HERE, enctype="multipart/form-data"> IS VERY IMPORTANT, WITHOUT IT, WILL NOT WORK
+
+In UserController.php => 
+
+//lec34 Uplaod and Display File
+function upload(){
+    return "Upload func called" ;
+}
+
+In web.php => 
+//lec34 Upload and Display File
+Route::view('/uploadfileform', 'upload');
+Route::post('/uploadsubmit' , [UserController::class , 'upload']) ; 
+
+On Browser : http://127.0.0.1:8000/uploadfileform
+FORM TO UPLOAD FILE
+Capture.PNG Upload File 
+
+after clicking "Upload File" button : http://127.0.0.1:8000/uploadsubmit
+Upload func called
+
+
+****** TO STORE OUR uploaded FILE IN PUBLIC FOLDER WITH A RANDOM/AUTO GENERATED NAME 
+
+In UserController.php => 
+function upload(Request $req){
+    echo "Upload func called" ; 
+    echo "<br>" ;
+    $path = $req->file('upload')->store('public') ; 
+    return $path ; 
+}
+
+Now, when we uplaod the file => 
+On Browser : http://127.0.0.1:8000/uploadsubmit
+Upload func called
+public/AlMS8iD6MfHjaWZf3zIDmP4kPmRfaahCQop8fgIR.png
+
+Here, the uplaoded file is stored in our project file directory, in the Storage/App/Public folder with file name as "AlMS8iD6MfHjaWZf3zIDmP4kPmRfaahCQop8fgIR.png" 
+{{this is randomly generated name}}
+
+
+
+
+****** TO STORE OUR uploaded FILE IN PUBLIC FOLDER WITH GIVEN/PROVIDED NAME
+NEED TO USE : ->storeAs instead of ->store
+Syntax :      $path = $req->file('upload')->storeAs('public' , 'fileName.extension') ; 
+
+In UserController.php => 
+function upload(Request $req){
+    echo "Upload func called" ; 
+    echo "<br>" ;
+    $path = $req->file('upload')->storeAs('public' , 'uploadedfile.png') ; 
+    return $path ; 
+}
+
+Now, when we uplaod the file => 
+On Browser : http://127.0.0.1:8000/uploadsubmit
+Upload func called
+public/uploadedfile.png
+
+
+
+***** MAKE THE UPLOADED FILE AS PUBLIC using php artisan storage:link
+
+Here, when we upload THE FILE, it gets stored in the Storage/App/Public folder
+But, we still cant access it 
+In our Directory, we have a folder named "PUBLIC" , WE NEED OUR IMAGE FILE TO COME HERE
+For these, we do in the terminal, php artisan storage:link
+
+PS C:\xampp\htdocs\MyProject> php artisan storage:link
+
+   INFO  The [C:\xampp\htdocs\MyProject\public\storage] link has been connected to [C:\xampp\htdocs\MyProject\storage\app/public].
+
+Thus, our uploaded files are now ready to access
+Also, note that, these files are noe visible in the "PUBLIC" parent folder also!
+
+
+
+
+***** DISPLAY THE UPPLOADED FILE/IMAGE ON UI/WEBPAGE 
+
+Make a new view to display the image file , lets say displayuploadedfile.blade.php 
+
+
+In UserController.php => 
+
+function upload(Request $req){
+    echo "Upload func called" ; 
+    echo "<br>" ;
+    $path = $req->file('upload')->storeAs('public' , 'uploadedfile.png') ; 
+    $filenamearray = explode('/' , $path) ; 
+    $filename = $filenamearray[1] ; 
+    return view('displayuploadedfile' , ['param' => $filename ]) ; 
+}
+
+CODE Explanation :- 
+$path = $req->file('upload')->storeAs('public', 'uploadedfile.png');: Stores the uploaded file in the public directory with the name uploadedfile.png. storeAs allows specifying a custom name.
+
+$filenamearray = explode('/', $path);: EXPLODE is a function which Splits the file path into an array using "/" as the delimiter. i.e. intailly, $path was = public/uploadedfile.png
+Now, after applying explode fnc it will split this string into array with "/" as spliting point
+Thus,  $filenamearray = ['public' , 'uploadedfile.png']
+
+$filename = $filenamearray[1];: Extracts the filename from the array.
+i.e.  $filename = 'uploadedfile.png' 
+
+return view('displayuploadedfile', ['param' => $filename]);: Returns the displayuploadedfile view and passes the filename as 'param' parameter to it.
+
+
+
+In displayuploadedfile.blade.php => 
+
+<div>
+    <h1>Displaying the Uploaded Image/File</h1>
+    <img src="{{url('storage/'.$param)}}" alt="Image" class="image">
+</div>
+
+<style>
+    .image{
+        height: 80vh ; 
+        width: 60vw ; 
+    }
+</style>
+
+CODE Explanation :- 
+
+<img src="{{url('storage/'.$param)}}" alt="Image" class="image">: Displays the uploaded image.
+ {{ url('storage/'. $param) }} constructs the URL to the stored file.
+ i.e. as $param = uploadedfile.png
+ Thus, storage/ + $param => 'storage/uploadedfile.png' 
+
+ THUS, WITH THESE, AFTER UPLADING THE FILE THROUGH THE FORM, WE CAN SEE OUR UPLAODED IMAGE ON THE BROWSER 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ADDITIONAL CHATGPT NOTES => 
+
+### Upload and Display File/Image in Laravel
+
+#### Steps to Implement
+
+1. **Make a Form to Select File**
+2. **Make a Controller for Uploading File**
+3. **Store File with Auto Generated Name**
+4. **Store File with Provided Name**
+5. **Make Uploaded File Public**
+6. **Display File After Upload**
+
+### 1. Make a Form to Select File
+
+**upload.blade.php:**
+```html
+<div>
+    <h1>FORM TO UPLOAD FILE</h1>
+    <form action="uploadsubmit" method="post" enctype="multipart/form-data">
+        @csrf
+        <input type="file" name="upload" id="upload">
+        <button>Upload File</button>
+    </form>
+</div>
+```
+> Note: `enctype="multipart/form-data"` is essential for file uploads.
+
+### 2. Make a Controller for Uploading File
+
+**UserController.php:**
+```php
+// lec34 Upload and Display File
+function upload(Request $req) {
+    return "Upload func called";
+}
+```
+
+### 3. Store File with Auto Generated Name
+
+**UserController.php:**
+```php
+use Illuminate\Http\Request;
+
+function upload(Request $req) {
+    $path = $req->file('upload')->store('public');
+    return $path;
+}
+```
+
+### 4. Store File with Provided Name
+
+**UserController.php:**
+```php
+function upload(Request $req) {
+    $path = $req->file('upload')->storeAs('public', 'uploadedfile.png');
+    return $path;
+}
+```
+
+### 5. Make Uploaded File Public
+
+Run the following command in the terminal:
+```bash
+php artisan storage:link
+```
+
+### 6. Display File After Upload
+
+**UserController.php:**
+```php
+function upload(Request $req) {
+    $path = $req->file('upload')->storeAs('public', 'uploadedfile.png');
+    $filenamearray = explode('/', $path);
+    $filename = $filenamearray[1];
+    return view('displayuploadedfile', ['param' => $filename]);
+}
+```
+
+**displayuploadedfile.blade.php:**
+```html
+<div>
+    <h1>Displaying the Uploaded Image/File</h1>
+    <img src="{{ url('storage/' . $param) }}" alt="Image" class="image">
+</div>
+
+<style>
+    .image {
+        height: 80vh;
+        width: 60vw;
+    }
+</style>
+```
+
+### Routing
+
+**web.php:**
+```php
+// lec34 Upload and Display File
+Route::view('/uploadfileform', 'upload');
+Route::post('/uploadsubmit', [UserController::class, 'upload']);
+```
+
+### Summary
+
+1. **Form Creation:**
+   - Create a form in Blade template for file upload with `enctype="multipart/form-data"`.
+
+2. **Controller Setup:**
+   - Define a method in the controller to handle file upload and return the uploaded file path.
+
+3. **Store File:**
+   - Store the uploaded file with an auto-generated name using `store('public')`.
+   - Store the uploaded file with a specified name using `storeAs('public', 'filename.extension')`.
+
+4. **Make File Public:**
+   - Use `php artisan storage:link` to create a symbolic link from `storage/app/public` to `public/storage`.
+
+5. **Display File:**
+   - After uploading the file, pass the file name to a view and construct the URL using `url('storage/' . $filename)` to display the file.
+
+### Additional Details
+
+- **File Validation:**
+  - Always validate the uploaded file before storing it to ensure it meets the required criteria (e.g., file type, size).
+  ```php
+  $validatedData = $req->validate([
+      'upload' => 'required|file|mimes:jpg,png,pdf|max:2048',
+  ]);
+  ```
+
+- **Security Considerations:**
+  - Sanitize file names and paths to prevent security vulnerabilities.
+  - Ensure the storage directory has the correct permissions.
+
+- **Handling Multiple File Uploads:**
+  - To handle multiple file uploads, modify the form to accept multiple files and adjust the controller method to process each file.
+
+Implementing file upload and display functionality in Laravel involves creating forms, handling file storage, and ensuring proper accessibility. By following these steps, you can effectively manage file uploads in your Laravel application.
