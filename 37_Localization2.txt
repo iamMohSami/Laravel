@@ -1,0 +1,482 @@
+ADVANCED LOCALIZATION CONCEPTS IN LARAVEL 
+
+1) Passing parameters to LOCALIZATION 
+
+Consider our view, localization.blade.php => 
+
+<div>
+    <h1>{{__('localization.title')}}</h1>
+    <h2>{{__('localization.greeting')}}</h2>
+
+    <a href="localizationAbout">{{__('localization.about')}}</a>
+    <br>
+    <a href="localizationAbout">{{__('localization.home')}}</a>
+    <br>
+    <a href="localizationAbout">{{__('localization.contact')}}</a>
+</div>
+<div>
+    <h3>Hello Mohammad Sami, Welcome to our webapp</h3>
+</div>
+
+Now, the username "Mohammad Sami" here is static and also while doing localization, till now we assigned static texts 
+Now, we need to make it dynamic i.e. the username should be dynamic and also the localization 
+
+HOW TO??? 
+
+In localization file, instead of writing static names, give an variable key with an ":" instead of actual static name 
+i.e.
+
+in en/localization.php =>
+<?php
+
+return [
+    "title"=>"Localization" , 
+    "greeting"=> "Hello, How are you??" ,
+    "about"=>"About" ,
+    "home"=>"Home" ,
+    "contact"=>"Contact Us" ,
+
+    // lec39 localization part 2
+    "username" => "Hello :name, Welcome to our webapp" 
+]
+
+
+?>
+
+
+in hi/localization.php =>
+
+<?php
+
+return [
+    "title"=>"स्थानीयकरण" , 
+    "greeting"=> "नमस्ते, आप कैसे हैं??" ,
+    "about"=>"के बारे में" ,
+    "home"=>"घर" ,
+    "contact"=>"संपर्क करें" ,
+    //lec39 Localization part 2 
+    "username" => "नमस्कार :name, हमारे वेबऐप में आपका स्वागत है" 
+]
+
+
+?>
+
+in urdu/localization.php => 
+<?php
+
+return [
+    "title"=>"لوکلائزیشن" , 
+    "greeting"=> "ہیلو آپ کیسے ہیں؟؟" ,
+    "about"=>"کے بارے میں" ,
+    "home"=>"گھر" ,
+    "contact"=>"ہم سے رابطہ کریں۔" ,
+    //lec39 Localization part 2 
+    "username" => "ہیلو    :name ، ہماری ویب ایپ میں خوش آمدید"  
+]
+
+
+?>
+
+Now, In localization.blade.php VIEW file => 
+
+{{-- lec39 localization part 2  --}}
+<div>
+    <h3>{{__('localization.username' , ["name"=>"Mohammad Sami"])}}</h3>
+</div>
+
+Here, we can dynamically pass the username and also change it with our convienance 
+
+OUTPUT ON BROWSER =>  http://127.0.0.1:8000/localization
+
+APP_LOCALE=en 
+
+Localization
+Hello, How are you??
+About
+Home
+Contact Us
+Hello Mohammad Sami, Welcome to our webapp
+
+
+OUTPUT ON BROWSER =>  http://127.0.0.1:8000/localization
+
+APP_LOCALE=hi
+
+स्थानीयकरण
+नमस्ते, आप कैसे हैं??
+के बारे में
+घर
+संपर्क करें
+
+नमस्कार Mohammad Sami, हमारे वेबऐप में आपका स्वागत है
+
+
+OUTPUT ON BROWSER =>  http://127.0.0.1:8000/localization
+
+APP_LOCALE=urdu
+
+لوکلائزیشن
+ہیلو آپ کیسے ہیں؟؟
+کے بارے میں
+گھر
+ہم سے رابطہ کریں۔
+ہیلو Mohammad Sami ، ہماری ویب ایپ میں خوش آمدید
+
+
+NOW, EVEN IF WE TRYNA CHANGE THE NAME IN THE BLADE FILE, IT WILL NOT AFFECT THE translations 
+i.e. 
+
+<div>
+    <h3>{{__('localization.username' , ["name"=>"Shah Rukh Khan"])}}</h3>
+</div>
+
+OUTPUT ON BROWSER =>  http://127.0.0.1:8000/localization
+APP_LOCALE=hi
+
+स्थानीयकरण
+नमस्ते, आप कैसे हैं??
+के बारे में
+घर
+संपर्क करें
+नमस्कार Shah Rukh Khan, हमारे वेबऐप में आपका स्वागत है
+
+
+
+
+2)  USER SPECIFIC WEBPAGE, CREATE 3 LINKS WHICH ON CLICKED, CHANGE THE LANGUAGE OF THE WEBPAGE using Session and Middleware
+
+ 
+ In localization.blade.php view => 
+
+ <div>
+    <h3>Choose WebPage language : </h3>
+    <a href="/setlang/en">English</a> <br>
+    <a href="/setlang/hi">Hindi</a> <br>
+    <a href="/setlang/urdu">Urdu</a>
+</div>
+
+
+In web.php => 
+
+Route::get('setlang/{lang}', function ($lang) {
+    //store the clicked lang in a session 
+    session()->get('lang', $lang);
+    return redirect('localization') ; 
+});
+
+Make a Middleware => php artisan make:middleware SetLang 
+
+PS C:\xampp\htdocs\MyProject> php artisan make:middleware SetLang
+
+   INFO  Middleware [C:\xampp\htdocs\MyProject\app\Http\Middleware\SetLang.php] created successfully.
+
+We want to make group middleware , 
+so , 
+
+IN bootstrap/app.php => 
+
+
+use App\Http\Middleware\SetLang ; 
+$middleware->appendToGroup('SetLang' , SetLang::class ) ;
+
+
+Now, In web.php => put all the routes in MW group 
+
+Route::middleware('SetLang' , function() {
+
+    //lec35 Localization part 1 (this is outside middleware in part1 , now we put it inside MW in part 2 )
+    Route::view('/localization', 'localization');
+
+    // Route::view('/localizationAbout', 'localizationAbout');
+    Route::get('localizationAbout/{lang}', function ($lang) {
+    App::setLocale($lang) ; 
+    return view('localizationAbout') ;
+    });
+
+
+    //new routes made in part 2 
+    Route::get('setlang/{lang}', function ($lang) {
+    //store the clicked lang in a session 
+    session()->get('lang', '$lang');
+    return redirect('localization') ; 
+    });
+
+});
+
+In SetLang.php  Middleware => 
+
+  public function handle(Request $request, Closure $next): Response
+    {
+        if($request->session()->get('lang')) {
+        \App::setLocale($request->session()->get('lang')) ; 
+        }
+        return $next($request);
+    }
+
+THUS, ON OUR BROWSER =>  http://127.0.0.1:8000/localization
+
+Localization
+Hello, How are you??
+About
+Home
+Contact Us
+Hello Shah Rukh Khan, Welcome to our webapp
+Choose WebPage language :
+English
+Hindi
+Urdu
+
+
+when we click on hindi => 
+स्थानीयकरण
+नमस्ते, आप कैसे हैं??
+के बारे में
+घर
+संपर्क करें
+नमस्कार Shah Rukh Khan, हमारे वेबऐप में आपका स्वागत है
+Choose WebPage language :
+English
+Hindi
+Urdu
+
+when we click on urdu => 
+لوکلائزیشن
+ہیلو آپ کیسے ہیں؟؟
+کے بارے میں
+گھر
+ہم سے رابطہ کریں۔
+ہیلو Shah Rukh Khan ، ہماری ویب ایپ میں خوش آمدید
+Choose WebPage language :
+English
+Hindi
+Urdu
+
+Also, Note that, as we have applied the MW group to all our localization routes, we can reflect the change in lang in localizationAbout.php page also!!
+
+
+
+
+
+
+
+
+ADDITIONAL CHATGPT NOTES => 
+
+### Advanced Localization Concepts in Laravel
+
+#### 1. Passing Parameters to Localization
+
+**Objective:**
+To make text dynamic by passing parameters to localization strings, allowing for user-specific content.
+
+**Example:**
+Consider the view file `localization.blade.php`:
+
+```html
+<div>
+    <h1>{{__('localization.title')}}</h1>
+    <h2>{{__('localization.greeting')}}</h2>
+
+    <a href="localizationAbout">{{__('localization.about')}}</a>
+    <br>
+    <a href="localizationAbout">{{__('localization.home')}}</a>
+    <br>
+    <a href="localizationAbout">{{__('localization.contact')}}</a>
+</div>
+<div>
+    <h3>{{__('localization.username', ['name' => 'Mohammad Sami'])}}</h3>
+</div>
+```
+
+**Localization Files:**
+
+**English (`lang/en/localization.php`):**
+```php
+<?php
+
+return [
+    "title" => "Localization",
+    "greeting" => "Hello, How are you??",
+    "about" => "About",
+    "home" => "Home",
+    "contact" => "Contact Us",
+    "username" => "Hello :name, Welcome to our webapp"
+];
+```
+
+**Hindi (`lang/hi/localization.php`):**
+```php
+<?php
+
+return [
+    "title" => "स्थानीयकरण",
+    "greeting" => "नमस्ते, आप कैसे हैं??",
+    "about" => "के बारे में",
+    "home" => "घर",
+    "contact" => "संपर्क करें",
+    "username" => "नमस्कार :name, हमारे वेबऐप में आपका स्वागत है"
+];
+```
+
+**Urdu (`lang/urdu/localization.php`):**
+```php
+<?php
+
+return [
+    "title" => "لوکلائزیشن",
+    "greeting" => "ہیلو آپ کیسے ہیں؟؟",
+    "about" => "کے بارے میں",
+    "home" => "گھر",
+    "contact" => "ہم سے رابطہ کریں۔",
+    "username" => "ہیلو :name ، ہماری ویب ایپ میں خوش آمدید"
+];
+```
+
+**Dynamic Username in View:**
+```html
+<div>
+    <h3>{{__('localization.username', ['name' => 'Mohammad Sami'])}}</h3>
+</div>
+```
+
+**Output Examples:**
+- **English (APP_LOCALE=en):**
+  ```
+  Hello Mohammad Sami, Welcome to our webapp
+  ```
+
+- **Hindi (APP_LOCALE=hi):**
+  ```
+  नमस्कार Mohammad Sami, हमारे वेबऐप में आपका स्वागत है
+  ```
+
+- **Urdu (APP_LOCALE=urdu):**
+  ```
+  ہیلو Mohammad Sami ، ہماری ویب ایپ میں خوش آمدید
+  ```
+
+The dynamic username can be changed easily:
+```html
+<div>
+    <h3>{{__('localization.username', ['name' => 'Shah Rukh Khan'])}}</h3>
+</div>
+```
+
+**Output:**
+- **Hindi (APP_LOCALE=hi):**
+  ```
+  नमस्कार Shah Rukh Khan, हमारे वेबऐप में आपका स्वागत है
+  ```
+
+#### 2. User-Specific Webpage with Language Selection Using Session and Middleware
+
+**Objective:**
+Create links to change the language of the webpage dynamically and store the selected language in the session.
+
+**View File (`localization.blade.php`):**
+```html
+<div>
+    <h3>Choose WebPage language:</h3>
+    <a href="/setlang/en">English</a> <br>
+    <a href="/setlang/hi">Hindi</a> <br>
+    <a href="/setlang/urdu">Urdu</a>
+</div>
+```
+
+**Routes in `web.php`:**
+```php
+Route::get('setlang/{lang}', function ($lang) {
+    session()->put('lang', $lang);
+    return redirect('localization');
+});
+
+Route::middleware('SetLang')->group(function () {
+    Route::view('/localization', 'localization');
+    Route::get('localizationAbout/{lang}', function ($lang) {
+        App::setLocale($lang);
+        return view('localizationAbout');
+    });
+});
+```
+
+**Creating Middleware:**
+Run the command to create middleware:
+```bash
+php artisan make:middleware SetLang
+```
+
+**Register Middleware in `app/Http/Kernel.php`:**
+```php
+protected $middlewareGroups = [
+    'web' => [
+        // other middleware
+        \App\Http\Middleware\SetLang::class,
+    ],
+    // other groups
+];
+```
+
+**Middleware Logic (`SetLang.php`):**
+```php
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+
+class SetLang
+{
+    public function handle(Request $request, Closure $next)
+    {
+        if ($request->session()->has('lang')) {
+            App::setLocale($request->session()->get('lang'));
+        }
+        return $next($request);
+    }
+}
+```
+
+**Output Examples:**
+
+- **Initial Page (APP_LOCALE=en):**
+  ```
+  Choose WebPage language:
+  English
+  Hindi
+  Urdu
+  ```
+
+- **After clicking Hindi link (APP_LOCALE=hi):**
+  ```
+  स्थानीयकरण
+  नमस्ते, आप कैसे हैं??
+  के बारे में
+  घर
+  संपर्क करें
+  Choose WebPage language:
+  English
+  Hindi
+  Urdu
+  ```
+
+- **After clicking Urdu link (APP_LOCALE=urdu):**
+  ```
+  لوکلائزیشن
+  ہیلو آپ کیسے ہیں؟؟
+  کے بارے میں
+  گھر
+  ہم سے رابطہ کریں۔
+  Choose WebPage language:
+  English
+  Hindi
+  Urdu
+  ```
+
+**Additional Details:**
+- **Session Handling:** Language preferences are stored in the session, allowing persistent user-specific language settings across pages.
+- **Middleware Use:** Middleware ensures that the language setting is applied to all relevant routes, enhancing maintainability and consistency across the application.
+
+By following these steps, you can implement advanced localization features in Laravel, allowing dynamic content personalization and enhanced user experience through language selection and parameterized localization strings.
+
+
+
