@@ -1,0 +1,394 @@
+Here, we will learn about "Localization"
+
+Points to cover => 
+What is Localization?
+Publish Localization in Laravel
+Make a Localization folder and file 
+Use Localization in view files
+Change default Localization
+
+
+
+1) WHAT IS LOCALIZATION??
+It basically means "multiple language support" to our project
+Localization concept is not just unique to Laravel, but it is a general feature found in almost all frameworks
+
+
+
+
+2) Publish Localization in Laravel
+now we will now how to enable/program this feature
+In earlier versions of laravel, this feature was available by default, BUT IN THIS LATEST VERSIONS, FIRST WE NEED TO PUBLISH LOCALIZATION
+
+how to publish?
+on terminal =>          php artisan lang:publish
+after running this, Localization will get published and its folders will be visible in the file directory
+new available folder after running this command is :-
+"lang" folder with "lang/en" which indicates "english" lang by default as it is widely considered
+this lang folder, has by default some files under it
+
+Now, lets make a new file under it =>   "localization.php"  
+
+Lets make two view pages => "localization.blade.php" AND " "localizationAbout.blade.php" 
+
+
+3) English and Hindi Web Page!
+
+In our localization.blade.php=> 
+
+<div>
+     <h1>Localization</h1>
+     <h2>Hello, How are you??</h2>
+
+    <a href="localizationAbout">About</a>
+    <br>
+    <a href="localizationAbout">Home</a>
+    <br>
+    <a href="localizationAbout">Contact Us</a>
+</div>
+
+In web.php =>
+//lec35 Localization part 1 
+Route::view('/localization', 'localization');
+Route::view('/localizationAbout', 'localizationAbout');
+
+On Browser : http://127.0.0.1:8000/localization
+WE see, ALL ENGLISH CONTENT ONLY
+Now, we want to convert this in HINDI language 
+
+Now, in our lang/en we had created "localization.php" => 
+in it => 
+
+<?php
+
+return [
+    "title"=>"Localization" , 
+    "greeting"=> "Hello, How are you??" ,
+    "about"=>"About" ,
+    "home"=>"Home" ,
+    "contact"=>"Contact Us" 
+]
+?>
+
+EXPLANATION := 
+From our localization.blade.php webpage, we need to identify all the different elements/parts AND mention it in the
+localization.php with giving them some relevant key names 
+
+NOW, FOR CONVERTING THEM INTO HINDI LANGUAGE 
+
+in lang folder, make a sibling folder named "hi" which stands for "hindi" 
+in this "hi" folder create file named "localization.php" and include => 
+<?php
+
+return [
+    "title"=>"स्थानीयकरण" , 
+    "greeting"=> "नमस्ते, आप कैसे हैं??" ,
+    "about"=>"के बारे में" ,
+    "home"=>"घर" ,
+    "contact"=>"संपर्क करें" 
+]
+?>
+
+NOTE => THE NAME OF FILE AND ITS KEY NAMES OF EACH ELEMNET SHOULD BE SAME IN BOTH FOLDERS 
+
+Now, we need to change the elements in the view file localization.blade.php => 
+
+Change  <h1>Localization</h1> --->      <h1>{{__('localization.title')}}</h1>
+AND OTHER SIMILARLY,
+
+<div> 
+    <h1>{{__('localization.title')}}</h1>
+    <h2>{{__('localization.greeting')}}</h2>
+
+    <a href="localizationAbout">{{__('localization.about')}}</a>
+    <br>
+    <a href="localizationAbout">{{__('localization.home')}}</a>
+    <br>
+    <a href="localizationAbout">{{__('localization.contact')}}</a>
+</div>
+
+
+now, to change language, "GO TO .env file" 
+there, " APP_LOCALE=en " 
+This is english language by default, change it to APP_LOCALE=hi for hindi language" 
+
+
+OUTPUT =>> 
+
+APP_LOCALE=en 
+On Browser : http://127.0.0.1:8000/localization 
+
+Localization
+Hello, How are you??
+About
+Home
+Contact Us
+
+
+APP_LOCALE=hi
+On Browser : http://127.0.0.1:8000/localization 
+
+स्थानीयकरण
+नमस्ते, आप कैसे हैं??
+के बारे में
+घर
+संपर्क करें
+
+
+
+
+LETS MAKE FOR ANOTHER LANGUAGE : "urdu" 
+
+make a new sibling folder in the /lang folder with name as "urdu" 
+
+in urdu/localization.php =>
+<?php
+
+return [
+    "title"=>"لوکلائزیشن" , 
+    "greeting"=> "ہیلو آپ کیسے ہیں؟؟" ,
+    "about"=>"کے بارے میں" ,
+    "home"=>"گھر" ,
+    "contact"=>"ہم سے رابطہ کریں۔" 
+]
+?>
+
+Now, 
+OUTPUT => 
+
+APP_LOCALE=urdu
+On Browser : http://127.0.0.1:8000/localization 
+
+لوکلائزیشن
+ہیلو آپ کیسے ہیں؟؟
+کے بارے میں
+گھر
+ہم سے رابطہ کریں۔
+
+
+
+
+********* IMAKING OUR OTHER VIEW localizationAbout.blade.php LANGUAGE DYNAMIC THROUGH BROWSER URL 
+
+i.e. 
+
+lang/en  localizationAbout.php => 
+<?php
+
+return [
+    "heading"=>"Localization About Page"  
+]
+
+?>
+
+lang/hi  localizationAbout.php => 
+<?php
+
+return [
+    "heading"=>"स्थानीयकरण के बारे में पृष्ठ"  
+]
+
+?>
+
+lang/urdu  localizationAbout.php => 
+<?php
+
+return [
+    "heading"=>"صفحہ کے بارے میں لوکلائزیشن"  
+]
+?>
+
+
+VIEW page localizationAbout.blade.php => 
+<div>
+    <h1>{{__('localizationAbout.heading')}}</h1>
+</div>
+
+in web.php => 
+Route::get('localizationAbout/{lang}', function ($lang) {
+    App::setLocale($lang) ; 
+    return view('localizationAbout') ;
+});
+
+ON BROWSER => http://127.0.0.1:8000/localizationAbout/en
+Localization About Page
+
+ON BROWSER => http://127.0.0.1:8000/localizationAbout/urdu
+صفحہ کے بارے میں لوکلائزیشن
+
+ON BROWSER => http://127.0.0.1:8000/localizationAbout/hi
+स्थानीयकरण के बारे में पृष्ठ
+
+
+
+
+
+ADDITIONAL CHATGPT NOTES => 
+
+
+### Localization in Laravel
+
+#### 1. What is Localization?
+Localization in Laravel refers to the ability to support multiple languages within a project. It allows developers to create applications that can display content in different languages based on user preferences or settings. This is a common feature across various frameworks, not just Laravel.
+
+#### 2. Publish Localization in Laravel
+
+In earlier versions of Laravel, localization features were available by default. However, in the latest versions, you need to publish the localization files first. 
+
+To publish localization files, run the following command in the terminal:
+```bash
+php artisan lang:publish
+```
+
+This command will create a `lang` directory with a default `en` folder for English language files.
+
+#### 3. Create Localization Files
+
+**Create a new file under `lang/en` named `localization.php`:**
+
+```php
+<?php
+
+return [
+    "title" => "Localization",
+    "greeting" => "Hello, How are you?",
+    "about" => "About",
+    "home" => "Home",
+    "contact" => "Contact Us"
+];
+```
+
+**Create corresponding files for other languages, e.g., Hindi (`lang/hi/localization.php`):**
+
+```php
+<?php
+
+return [
+    "title" => "स्थानीयकरण",
+    "greeting" => "नमस्ते, आप कैसे हैं??",
+    "about" => "के बारे में",
+    "home" => "घर",
+    "contact" => "संपर्क करें"
+];
+```
+
+**For Urdu (`lang/urdu/localization.php`):**
+
+```php
+<?php
+
+return [
+    "title" => "لوکلائزیشن",
+    "greeting" => "ہیلو آپ کیسے ہیں؟؟",
+    "about" => "کے بارے میں",
+    "home" => "گھر",
+    "contact" => "ہم سے رابطہ کریں۔"
+];
+```
+
+#### 4. Use Localization in View Files
+
+In `localization.blade.php`, replace static text with localization keys:
+
+```html
+<div>
+    <h1>{{ __('localization.title') }}</h1>
+    <h2>{{ __('localization.greeting') }}</h2>
+    <a href="localizationAbout">{{ __('localization.about') }}</a>
+    <br>
+    <a href="localizationAbout">{{ __('localization.home') }}</a>
+    <br>
+    <a href="localizationAbout">{{ __('localization.contact') }}</a>
+</div>
+```
+
+#### 5. Change Default Localization
+
+To change the default language, update the `APP_LOCALE` setting in the `.env` file:
+
+```env
+APP_LOCALE=en
+```
+
+To switch to Hindi, change it to:
+
+```env
+APP_LOCALE=hi
+```
+
+Or for Urdu:
+
+```env
+APP_LOCALE=urdu
+```
+
+#### 6. Dynamic Language Change via URL
+
+**Create `localizationAbout` language files:**
+
+**English (`lang/en/localizationAbout.php`):**
+```php
+<?php
+
+return [
+    "heading" => "Localization About Page"
+];
+```
+
+**Hindi (`lang/hi/localizationAbout.php`):**
+```php
+<?php
+
+return [
+    "heading" => "स्थानीयकरण के बारे में पृष्ठ"
+];
+```
+
+**Urdu (`lang/urdu/localizationAbout.php`):**
+```php
+<?php
+
+return [
+    "heading" => "صفحہ کے بارے میں لوکلائزیشن"
+];
+```
+
+**In `localizationAbout.blade.php`:**
+```html
+<div>
+    <h1>{{ __('localizationAbout.heading') }}</h1>
+</div>
+```
+
+**Update `web.php` to handle language parameter:**
+```php
+Route::get('localizationAbout/{lang}', function ($lang) {
+    App::setLocale($lang);
+    return view('localizationAbout');
+});
+```
+
+#### Summary
+
+1. **Localization Concept:**
+   - Supports multiple languages in a project.
+   - Common across various frameworks.
+
+2. **Publishing Localization:**
+   - Use `php artisan lang:publish` to create localization files.
+
+3. **Creating Localization Files:**
+   - Create language files under `lang/en`, `lang/hi`, `lang/urdu`, etc.
+   - Define key-value pairs for translations.
+
+4. **Using Localization in Views:**
+   - Replace static text with localization keys using `__('key')`.
+
+5. **Changing Default Localization:**
+   - Update the `APP_LOCALE` setting in the `.env` file.
+
+6. **Dynamic Language Change:**
+   - Handle language changes via URL parameters.
+   - Update routes to accept language parameters.
+
+By following these steps, you can implement localization in Laravel, allowing your application to support multiple languages seamlessly.
