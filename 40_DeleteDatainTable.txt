@@ -1,0 +1,197 @@
+In prev lec, we displayed the employee table data in tabular format
+Now, we will add a DELETE link next to each employee name which when clicked, EMPLOYEE SHOULD BE DELETED AND RETURN BACK TO SAME MODIFIED TABLE 
+
+how to? 
+
+Lets add a delete anchor link in our view file => HERE, WE TAKE THE EMPLOYEE ID FOR DELETION PURPOSE
+In list-employee.blade.php => 
+
+<div>
+    <h1>EMPLOYEE LIST</h1>
+    {{-- {{print_r($employeedata)}}  --}}
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+            <th>Operations</th>
+        </tr>
+
+        @foreach ($employeedata as $emp )
+            <tr>
+                <td>{{$emp->id}}</td>
+                <td>{{$emp->name}}</td>
+                <td>{{$emp->email}}</td>
+                <td>{{$emp->phone}}</td>
+                <td>{{$emp->created_at}}</td>
+                <td>{{$emp->updated_at}}</td>
+            //THIS IS NEW ANCHOR LINK ADDED FOR DELETE EMPLOYEE 
+                <td><a href="{{ url('deleteemployee/'.$emp->id) }}">Delete</a></td>
+            </tr>
+        @endforeach
+    </table>
+</div>
+
+
+
+In web.php =>
+//lec40 delete data from employee table
+Route::get('/deleteemployee/{id}' , [EmployeeController::class , 'delete']) ; 
+
+
+In EmployeeController.php =>
+
+   function delete($id){
+        $isDeleted = Employee::destroy($id) ; 
+        //If successfully destroyed/deleted , $isDeleted value = 1 ELSE $isDeleted value = 0
+        if($isDeleted){
+            return redirect('listemployee') ; 
+        }
+   }
+
+This successfully helps in Deleting any Employee => 
+
+ON BROWSER intially => http://127.0.0.1:8000/listemployee
+
+EMPLOYEE LIST
+ID	Name	           Email	            Phone	Created At	        Updated At	        Operations
+3	Rahul Malhotra	   rahul@faang.com	    4563	2024-07-03 04:32:17	2024-07-03 04:32:17	Delete
+4	Mohammad Sami	   sami2004@gmail.com	6545	2024-07-03 07:10:29	2024-07-03 07:10:29	Delete
+5	Dr. Rohan Oberoi   rohnan@test.com	    123456	2024-07-04 05:00:27	2024-07-04 05:00:27	Delete
+
+Lets Click on Delete for ID 3 Rahul Malhotra => http://127.0.0.1:8000/listemployee
+
+EMPLOYEE LIST
+ID	Name	           Email	            Phone	Created At	        Updated At	        Operations
+4	Mohammad Sami	   sami2004@gmail.com	6545	2024-07-03 07:10:29	2024-07-03 07:10:29	Delete
+5	Dr. Rohan Oberoi   rohnan@test.com	    123456	2024-07-04 05:00:27	2024-07-04 05:00:27	Delete
+
+
+
+ADDITIONAL CHATGPT NOTES => 
+
+### Deleting an Employee from the Table
+
+#### Steps to Delete Data from the Database
+
+**1. Add a Delete Link in the View**
+
+Update the `list-employee.blade.php` file to include a delete link for each employee. This link will point to a route that handles the deletion:
+
+```html
+<div>
+    <h1>EMPLOYEE LIST</h1>
+    {{-- {{print_r($employeedata)}}  --}}
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+            <th>Operations</th>
+        </tr>
+
+        @foreach ($employeedata as $emp)
+            <tr>
+                <td>{{ $emp->id }}</td>
+                <td>{{ $emp->name }}</td>
+                <td>{{ $emp->email }}</td>
+                <td>{{ $emp->phone }}</td>
+                <td>{{ $emp->created_at }}</td>
+                <td>{{ $emp->updated_at }}</td>
+                <td><a href="{{ url('deleteemployee/'.$emp->id) }}">Delete</a></td>
+            </tr>
+        @endforeach
+    </table>
+</div>
+```
+
+**2. Define the Route**
+
+Add a route in `web.php` to handle the deletion of an employee. This route will call the `delete` method in the `EmployeeController`:
+
+```php
+use App\Http\Controllers\EmployeeController;
+
+// lec40 delete data from employee table
+Route::get('/deleteemployee/{id}', [EmployeeController::class, 'delete']);
+```
+
+**3. Implement the Delete Method in the Controller**
+
+In `EmployeeController.php`, add a method to handle the deletion of an employee record:
+
+```php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Employee;
+
+class EmployeeController extends Controller
+{
+    public function list()
+    {
+        $alldata = Employee::all();
+        return view('list-employee', ['employeedata' => $alldata]);
+    }
+
+    public function delete($id)
+    {
+        $isDeleted = Employee::destroy($id); // Delete the record by ID
+        if ($isDeleted) {
+            return redirect('listemployee'); // Redirect to the employee list after deletion
+        }
+    }
+}
+```
+
+**4. Test the Deletion Functionality**
+
+Open your browser and navigate to `http://127.0.0.1:8000/listemployee` to see the list of employees with the delete links. Click on the "Delete" link next to an employee to remove the record from the database.
+
+**Expected Output:**
+
+Initial Table:
+
+```
+EMPLOYEE LIST
+-----------------------------------------------------------
+ID  | Name            | Email                       | Phone  | Created At           | Updated At           | Operations
+-----------------------------------------------------------
+3   | Rahul Malhotra  | rahul@faang.com             | 4563   | 2024-07-03 04:32:17  | 2024-07-03 04:32:17  | Delete
+4   | Mohammad Sami   | sami2004@gmail.com          | 6545   | 2024-07-03 07:10:29  | 2024-07-03 07:10:29  | Delete
+5   | Dr. Rohan Oberoi| rohnan@test.com             | 123456 | 2024-07-04 05:00:27  | 2024-07-04 05:00:27  | Delete
+-----------------------------------------------------------
+```
+
+After Deleting Employee with ID 3:
+
+```
+EMPLOYEE LIST
+-----------------------------------------------------------
+ID  | Name            | Email                       | Phone  | Created At           | Updated At           | Operations
+-----------------------------------------------------------
+4   | Mohammad Sami   | sami2004@gmail.com          | 6545   | 2024-07-03 07:10:29  | 2024-07-03 07:10:29  | Delete
+5   | Dr. Rohan Oberoi| rohnan@test.com             | 123456 | 2024-07-04 05:00:27  | 2024-07-04 05:00:27  | Delete
+-----------------------------------------------------------
+```
+
+### Summary
+
+To delete an employee record from a database table in Laravel, follow these steps:
+
+1. **Add a Delete Link in the View:** Modify the view file to include a delete link for each record.
+2. **Define the Route:** Create a route that handles the deletion request.
+3. **Implement the Controller Logic:** Add a method in the controller to delete the record and redirect back to the list view.
+4. **Test the Functionality:** Verify the deletion process by clicking the delete link and ensuring the record is removed from the table.
+
+### Additional Details
+
+- **Confirmation Dialog:** For better user experience and to avoid accidental deletions, you can add a confirmation dialog before proceeding with the deletion.
+- **Soft Deletes:** Instead of permanently deleting records, consider using Laravel's soft delete feature, which marks records as deleted without removing them from the database. This can be achieved by adding the `SoftDeletes` trait to the model.
+- **Error Handling:** Implement error handling to manage cases where the deletion might fail, providing appropriate feedback to the user.
