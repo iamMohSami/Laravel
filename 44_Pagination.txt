@@ -1,0 +1,76 @@
+Pagination is the process of dividing a large dataset into smaller, more manageable chunks or pages. This technique is used to improve the user experience and performance of applications by allowing users to view data in smaller portions rather than loading an entire dataset at once.
+
+i.e CONSIDER OUR listemployee.blade.php file, it shows all the list of employees in the DB
+but, if there are 100 Employees in DB, its not good to show all the employees data in 1 page where user needs to scroll down, BUT INSTEAD, we divide the list of 100 employees in different equal chunks and display them in sparate pages with a "prev" and "next" and "controls" links!!
+
+Why Use Pagination?
+Improved Performance: Loading large datasets can be resource-intensive and slow down the application. Pagination helps reduce the load by only retrieving a subset of data at a time.
+Enhanced User Experience: Users can navigate through data easily and avoid being overwhelmed by a large amount of information presented at once.
+Reduced Bandwidth Usage: Pagination limits the amount of data transferred between the server and client, conserving bandwidth. 
+
+
+How to apply Pagination ? 
+There are 3 simple ways for this = 
+
+1. Apply Pagination with Database Result
+
+In EmployeeController.php : 
+
+function list(){
+        $alldata = Employee::all() ; 
+        //all function retrieves all the info from table and stored it in $alldata var
+        return view('list-employee' , ['employeedata'=>$alldata]) ; 
+    }
+This function is responsible to retrieve all the DB data, here we change it to : 
+
+    function list(){
+        $alldata = Employee::paginate(4) ; 
+        //paginate fn automatically breaks entire DB in chunks of 4 employee data
+        // syntax : InstanceName::paginate(x) ; breaks the DB in chunks of x data
+        return view('list-employee' , ['employeedata'=>$alldata]) ; 
+    }
+
+2. Apply Pagination Link in the view file  :     {{$employeedata->links()}} at the last end of the list-employee.blade.php file 
+
+
+3. ADDING STYLING for < and  > symbols as they are very very large by default in the design of webpage 
+
+by inspecting the page, we get the class of these symbols : w-5 h-5 
+So, in  list-employee.blade.php file  = 
+
+<style>
+    .w-5.h-5{
+        width: 20px;
+    }
+</style>
+
+
+THUS, NOW ON BROWSER : http://127.0.0.1:8000/listemployee
+
+EMPLOYEE LIST
+Search by Name!
+ Search
+ID	Name	Email	Phone	Created At	Updated At	Operations
+4	Mohammad Sami	iamsami@gmail.com	6545	2024-07-06 13:16:42	2024-07-06 07:46:42	Delete	Edit
+5	Dr. Rohan Oberoi	rohnan@test.com	123456	2024-07-04 05:00:27	2024-07-04 05:00:27	Delete	Edit
+6	Shah Rukh Khan	kingkhan@mannat.com	55555	2024-07-05 04:37:58	2024-07-05 04:37:58	Delete	Edit
+7	Rahul Gandhi	futurepm@india.com	400400	2024-07-06 13:13:20	2024-07-06 07:43:20	Delete	Edit
+« Previous Next »
+Showing 1 to 4 of 8 results
+
+ < 1 2 >
+
+ When clicked on "Next" - > 
+
+ EMPLOYEE LIST
+Search by Name!
+ Search
+ID	Name	Email	Phone	Created At	Updated At	Operations
+8	Virat Kohli	indgoat@cricket.com	123456	2024-07-06 13:46:02	2024-07-06 13:46:02	Delete	Edit
+9	Babar Azam	pakgoat@cric.com	3214565	2024-07-06 13:46:21	2024-07-06 13:46:21	Delete	Edit
+10	Arda Guler	turkishmessi@foot.com	96457	2024-07-06 13:46:42	2024-07-06 13:46:42	Delete	Edit
+12	Kvicha Kvartsheklia	leftwinger@napoli.com	96547	2024-07-06 13:47:21	2024-07-06 13:47:21	Delete	Edit
+« Previous Next »
+Showing 5 to 8 of 8 results
+
+ 1 2 
