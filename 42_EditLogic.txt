@@ -1,0 +1,154 @@
+Now, in prev lec, we made EDIT button which takes to EDIT form and also POPULATED that form
+but, when we click the UPDATE button, NO ACTION DONE
+
+Now, we will IMPLEMENT THAT LOGIC => 
+
+
+for editing any data from the DB, we use "PUT" ROUTING METHOD 
+
+in web.php => 
+Route::put('/editemployee/{id}' , [EmployeeController::class , 'editemp']) ; 
+
+
+iN edit-employee.blade.view file => 
+
+<h1>UPDATE EMPLOYEE DETAILS</h1>
+<form action="" method="post">
+    @csrf 
+    {{-- FOR EDITING ANY DATA IN DB, we use PUT routing method  --}}
+    <input type="hidden" name="_method" value="PUT">
+    <input type="text" name="name" placeholder="Enter Name" value="{{$empd->name}} "> <br> <br>
+    <input type="text" name="email" placeholder="Enter Email" value="{{$empd->email}} "> <br> <br>
+    <input type="tel" name="phone" placeholder="Enter Phone Number" value="{{$empd->phone}} "> <br> <br>
+    <button>Update</button>
+    <a href="/listemployee">Cancel</a>
+</form>
+
+in EmployeeController.php => 
+
+  function editemp(Request $req , $id){
+        $employeedata = Employee::find($id) ; 
+        $employeedata->name = $req->name ; 
+        $employeedata->email = $req->email ; 
+        $employeedata->phone = $req->phone ; 
+        if($employeedata->save()) {
+            return redirect('listemployee') ; 
+        }else {
+            return "EDIT OPERATION FAILED " ;
+        }
+    }
+
+
+ON BROWSER =>  http://127.0.0.1:8000/listemployee
+
+EMPLOYEE LIST
+ID	Name	Email	Phone	Created At	Updated At	Operations
+4	Mohammad Sami	choudharisami2004@gmail.com	6545	2024-07-03 07:10:29	2024-07-03 07:10:29	Delete	Edit
+5	Dr. Rohan Oberoi	rohnan@test.com	123456	2024-07-04 05:00:27	2024-07-04 05:00:27	Delete	Edit
+6	Shah Rukh Khan	kingkhan@mannat.com	55555	2024-07-05 04:37:58	2024-07-05 04:37:58	Delete	Edit
+7	Rahul Gandhi	futurepm@india.com	400400	2024-07-06 13:13:20	2024-07-06 07:43:20	Delete	Edit
+
+
+
+NOW, LETS CLICK ON "edit" Operation for ID=4 and change its EMAIL => 
+
+http://127.0.0.1:8000/editemployee/4
+
+UPDATE EMPLOYEE DETAILS
+Mohammad Sami 
+
+iamsami@gmail.com 
+
+6545 
+
+Update Cancel
+
+On clicking UPDATE BUTTON => 
+
+EMPLOYEE LIST
+ID	Name	        Email	            Phone	Created At	        Updated At	        Operations
+4	Mohammad Sami	iamsami@gmail.com	6545	2024-07-06 13:16:42	2024-07-06 07:46:42	Delete	Edit
+5	Dr. Rohan Oberoi	rohnan@test.com	123456	2024-07-04 05:00:27	2024-07-04 05:00:27	Delete	Edit
+6	Shah Rukh Khan	kingkhan@mannat.com	55555	2024-07-05 04:37:58	2024-07-05 04:37:58	Delete	Edit
+7	Rahul Gandhi	futurepm@india.com	400400	2024-07-06 13:13:20	2024-07-06 07:43:20	Delete	Edit
+
+
+
+
+
+ADDITIONAL CHATGPT NOTES => 
+
+### Checking and Correcting the Notes and Code
+
+Your notes and code for implementing the editing logic in a Laravel application are mostly correct. Below are the notes with a few adjustments for clarity and correctness:
+
+### 1. Adding the Route
+In `web.php`, add a route to handle the PUT request for updating an employee:
+
+```php
+Route::put('/editemployee/{id}', [EmployeeController::class, 'editemp']);
+```
+
+### 2. Creating the Edit Form
+In `edit-employee.blade.php`, create a form to update the employee details. Ensure the form uses the `PUT` method and populates the input fields with the current employee data:
+
+```php
+<h1>UPDATE EMPLOYEE DETAILS</h1>
+<form action="{{ url('editemployee/'.$empd->id) }}" method="post">
+    @csrf
+    {{-- FOR EDITING ANY DATA IN DB, we use PUT routing method  --}}
+    <input type="hidden" name="_method" value="PUT">
+    <input type="text" name="name" placeholder="Enter Name" value="{{ $empd->name }}"> <br> <br>
+    <input type="email" name="email" placeholder="Enter Email" value="{{ $empd->email }}"> <br> <br>
+    <input type="tel" name="phone" placeholder="Enter Phone Number" value="{{ $empd->phone }}"> <br> <br>
+    <button>Update</button>
+    <a href="/listemployee">Cancel</a>
+</form>
+```
+
+### 3. Adding the Controller Method
+In `EmployeeController.php`, add a method to handle the form submission and update the employee in the database:
+
+```php
+public function editemp(Request $req, $id)
+{
+    $employeedata = Employee::find($id);
+    $employeedata->name = $req->name;
+    $employeedata->email = $req->email;
+    $employeedata->phone = $req->phone;
+    if ($employeedata->save()) {
+        return redirect('listemployee');
+    } else {
+        return "EDIT OPERATION FAILED";
+    }
+}
+```
+
+### 4. Updating the List View
+In `list-employee.blade.php`, add an edit link next to each employee:
+
+```php
+<tr>
+    <td>{{ $emp->id }}</td>
+    <td>{{ $emp->name }}</td>
+    <td>{{ $emp->email }}</td>
+    <td>{{ $emp->phone }}</td>
+    <td>{{ $emp->created_at }}</td>
+    <td>{{ $emp->updated_at }}</td>
+    <td><a href="{{ url('deleteemployee/'.$emp->id) }}">Delete</a></td>
+    <td><a href="{{ url('editemployee/'.$emp->id) }}">Edit</a></td>
+</tr>
+```
+
+### Summary
+1. **Adding Route**: Define a route in `web.php` to handle the PUT request for editing an employee.
+2. **Creating Edit Form**: Create a view file (`edit-employee.blade.php`) with a form that uses the `PUT` method. Ensure the form fields are populated with the current data of the employee.
+3. **Handling Form Submission**: Add a method in `EmployeeController` to handle the form submission, update the employee's data, and save it to the database.
+4. **Updating List View**: Modify the employee list view to include an edit link next to each employee, allowing the user to navigate to the edit form.
+
+### Additional Details
+- **Validation**: Consider adding validation rules to ensure the data being updated is valid. This can be done using Laravel's built-in validation.
+- **User Feedback**: Provide user feedback on successful updates or errors using Laravel's session flash messages.
+- **Security**: Ensure only authorized users can update employee details by using Laravel's authentication and authorization features.
+
+By following these steps and incorporating these additional details, you will have a robust implementation for editing employee details in your Laravel application.
